@@ -1,0 +1,24 @@
+[project]
+name = "towsand"
+version = "0.1.0"
+description = "Portfolio management system for the Townsend family — tracks holdings, enforces rules, recommends actions"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1",
+    "pandas>=2.2",
+    "yfinance>=0.2",
+    "flask>=3.0",
+    "tabulate>=0.9",
+    "rich>=13.0",
+    "ib_async>=2.1",
+]
+
+[project.scripts]
+towsand = "src.cli.main:cli"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["src*"]

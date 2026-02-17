@@ -1,0 +1,1 @@
+Overall objective: maximise risk-adjusted returns for the Townsend family over the timeframes dictated in strategy documents.
