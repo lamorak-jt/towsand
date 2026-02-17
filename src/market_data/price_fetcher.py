@@ -10,7 +10,6 @@ Handles:
 import logging
 from datetime import date, timedelta
 
-import pandas as pd
 import yfinance as yf
 
 from src.db.connection import get_connection
@@ -57,7 +56,6 @@ def fetch_prices(db_path=None) -> dict:
         logger.info("No held instruments to fetch prices for.")
         return {"updated": 0, "failed": [], "unchanged": 0}
 
-    today = date.today().isoformat()
     stats = {"updated": 0, "failed": [], "unchanged": 0}
 
     for inst in instruments:
@@ -169,7 +167,6 @@ def fetch_fx_rates(db_path=None) -> dict:
     if not currencies:
         return {"updated": 0, "failed": []}
 
-    today = date.today().isoformat()
     stats = {"updated": 0, "failed": []}
 
     for ccy in sorted(currencies):

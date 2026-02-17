@@ -7,7 +7,7 @@ import logging
 from datetime import date
 
 from src.db.connection import get_connection
-from src.market_data.commsec_importer import COMMSEC_ACCOUNT_NAME, _ensure_commsec_account
+from src.market_data.commsec_importer import _ensure_commsec_account
 
 logger = logging.getLogger(__name__)
 

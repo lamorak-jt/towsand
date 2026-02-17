@@ -459,7 +459,6 @@ def portfolio_exposures():
         click.echo(f"  {driver:<24s}  AUD {value:>14,.2f}  {pct:>6.1f}%")
 
     # Corporate group from classifications
-    import json
     groups: dict[str, float] = {}
     for h in pv.holdings:
         grp = h.corporate_group or "ungrouped"

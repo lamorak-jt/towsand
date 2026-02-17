@@ -379,7 +379,6 @@ def check_currency_exposure(pv: PortfolioValuation) -> list[CheckResult]:
 
     aud_growth = sum(h.value_aud for h in growth_holdings if h.currency == "AUD")
     aud_pct = (aud_growth / growth_total * 100)
-    non_aud_pct = 100 - aud_pct
 
     # Rule 5.1: AUD 50-70%, non-AUD 30-50%
     if aud_pct < 50:
@@ -406,7 +405,6 @@ def check_currency_exposure(pv: PortfolioValuation) -> list[CheckResult]:
     intl_total = sum(h.value_aud for h in intl_growth)
     if intl_total > 0:
         unhedged = sum(h.value_aud for h in intl_growth if h.capital_role and not _is_hedged(h))
-        hedged = intl_total - unhedged
         unhedged_pct = (unhedged / intl_total * 100) if intl_total > 0 else 0
 
         if unhedged_pct < 40:
@@ -634,7 +632,6 @@ def check_drawdown(pv: PortfolioValuation) -> list[CheckResult]:
         if h.capital_role in ("compounder", "optionality"):
             equity_loss += h.value_aud * 0.35
 
-    post_drawdown = total - equity_loss
     with get_connection() as conn:
         monthly = _get_param_float(conn, "monthly_expenses", 9000)
     min_needed = 24 * monthly  # must still cover 24 months
