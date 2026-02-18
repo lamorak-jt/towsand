@@ -524,6 +524,340 @@ def compliance_cmd(detail, save):
         click.echo(f"\nSnapshot #{snap_id} saved.")
 
 
+# ---------------------------------------------------------------------------
+# Analytics commands (sensitivity, stress, correlations)
+# ---------------------------------------------------------------------------
+
+@cli.command("sensitivity")
+@click.option("--trades", "trades_file", type=click.Path(exists=True),
+              help="JSON file of hypothetical trades. Shows pre-trade AND post-trade sensitivity.")
+def sensitivity_cmd(trades_file):
+    """How fragile is the portfolio against its strategic objectives?
+
+    Tests: income bridge failure, forced liquidation distance, compounding
+    capital at risk, AUD liability matching, optionality sizing.
+
+    With --trades <file.json>, shows both pre-trade and post-trade sensitivity.
+    JSON format: [{"ticker": "FLBL", "delta_aud": -120000}, ...]
+    """
+    import json as json_mod
+    from src.portfolio.valuation import compute_valuation, project_valuation
+    from src.analytics.sensitivity import analyse_sensitivity
+
+    pv = compute_valuation()
+
+    projected_pv = None
+    if trades_file:
+        with open(trades_file) as f:
+            trades = json_mod.load(f)
+        projected_pv = project_valuation(pv, trades)
+
+    portfolios = [("PRE-TRADE", pv)]
+    if projected_pv:
+        portfolios.append(("POST-TRADE", projected_pv))
+
+    severity_color = {"safe": "green", "watch": "cyan", "fragile": "yellow", "critical": "red"}
+    severity_icon = {"safe": "✓", "watch": "◉", "fragile": "⚠", "critical": "✗"}
+
+    for label, port in portfolios:
+        report = analyse_sensitivity(port)
+        label_str = f" ({label})" if projected_pv else ""
+
+        click.echo(f"\nPortfolio{label_str}: AUD {port.total_aud:,.2f}")
+        click.echo(click.style(f"\n=== OBJECTIVE-LEVEL SENSITIVITY{label_str} ===\n", bold=True))
+
+        for obj in report.objectives:
+            color = severity_color.get(obj.severity, "white")
+            icon = severity_icon.get(obj.severity, "?")
+            click.echo(click.style(
+                f"  {icon} {obj.objective} [{obj.severity.upper()}]",
+                fg=color, bold=obj.severity in ("critical", "fragile"),
+            ))
+            click.echo(f"    {obj.headline}")
+            click.echo(click.style(f"    State: {obj.current_state}", dim=True))
+            click.echo(f"    Trigger: {obj.trigger_move}")
+            click.echo(f"    Consequence: {obj.consequence}")
+            click.echo()
+
+        if report.rule_buffers:
+            click.echo(click.style(f"--- Supporting: Rule-Level Buffers{label_str} ---\n", bold=True))
+            click.echo(f"  {'Rule':<10s}  {'Description':<26s}  {'Current':>8s}  {'Limit':>6s}  {'Buffer':>7s}  {'Move'}")
+            click.echo(f"  {'-'*90}")
+            for rb in report.rule_buffers:
+                click.echo(
+                    f"  {rb.rule_id:<10s}  {rb.description:<26s}  {rb.current_value:>7.1f}%  "
+                    f"{rb.limit:>5.0f}%  {rb.buffer_pct:>+6.1f}pp  {rb.breach_move}"
+                )
+
+
+@cli.command("stress")
+@click.option("--scenario", type=click.Choice(["flat35", "covid2020", "gfc2008", "rates2022", "all"]),
+              default="all", help="Scenario to run (default: all).")
+@click.option("--detail", is_flag=True, help="Show per-holding drawdowns.")
+@click.option("--trades", "trades_file", type=click.Path(exists=True),
+              help="JSON file of hypothetical trades to project. Runs pre-trade AND post-trade comparison.")
+def stress_cmd(scenario, detail, trades_file):
+    """What happens to your strategic objectives under stress?
+
+    For each scenario: can you still feed your family? How much compounding
+    was destroyed? Did optionality pay off? Are you forced to sell?
+
+    With --trades <file.json>, runs both pre-trade and post-trade portfolios
+    and shows how the trades change resilience. JSON format:
+    [{"ticker": "FLBL", "delta_aud": -120000}, {"ticker": "VAS.AX", "delta_aud": 80000}]
+    """
+    import json as json_mod
+    from src.portfolio.valuation import compute_valuation, project_valuation
+    from src.analytics.stress import run_scenario, run_all_scenarios
+
+    pv = compute_valuation()
+
+    projected_pv = None
+    if trades_file:
+        with open(trades_file) as f:
+            trades = json_mod.load(f)
+        projected_pv = project_valuation(pv, trades)
+
+    portfolios = [("PRE-TRADE", pv)]
+    if projected_pv:
+        portfolios.append(("POST-TRADE", projected_pv))
+
+    all_run_results: list[tuple[str, list]] = []
+
+    for label, port in portfolios:
+        if scenario == "all":
+            results = run_all_scenarios(port)
+        else:
+            results = [run_scenario(port, scenario)]
+        all_run_results.append((label, results))
+
+    # If comparing, show side-by-side summary
+    if projected_pv:
+        click.echo(f"\nPre-trade portfolio:  AUD {pv.total_aud:,.2f}")
+        click.echo(f"Post-trade portfolio: AUD {projected_pv.total_aud:,.2f}")
+        click.echo(click.style("\n=== PRE-TRADE vs POST-TRADE STRESS COMPARISON ===\n", bold=True))
+
+        pre_results = {r.scenario_id: r for _, r_list in all_run_results[:1] for r in r_list}
+        post_results = {r.scenario_id: r for _, r_list in all_run_results[1:] for r in r_list}
+
+        click.echo(f"  {'Scenario':<30s}  {'| Pre-Trade':>44s}  {'| Post-Trade':>44s}  {'| Delta':>20s}")
+        click.echo(f"  {'':<30s}  {'Wealth Loss':>12s} {'Comp.Dam':>10s} {'Recov':>8s} {'Forced':>8s}"
+                   f"  {'Wealth Loss':>12s} {'Comp.Dam':>10s} {'Recov':>8s} {'Forced':>8s}"
+                   f"  {'Comp.':>10s} {'Recov':>8s}")
+        click.echo(f"  {'-'*170}")
+
+        for sid in (pre_results.keys() | post_results.keys()):
+            pre = pre_results.get(sid)
+            post = post_results.get(sid)
+            if not pre or not post:
+                continue
+            po, qo = pre.objectives, post.objectives
+
+            pre_forced = "YES" if po.forced_liquidation else "No"
+            post_forced = "YES" if qo.forced_liquidation else "No"
+            comp_delta = qo.compounder_loss_aud - po.compounder_loss_aud
+            recov_delta = qo.recovery_years - po.recovery_years
+            d_sign = "+" if comp_delta > 0 else ""
+            r_sign = "+" if recov_delta > 0 else ""
+
+            click.echo(
+                f"  {pre.scenario_name:<30s}  "
+                f"{po.wealth_loss_aud:>12,.0f} {po.compounder_loss_aud:>10,.0f} {po.recovery_years:>7.1f}y {pre_forced:>8s}"
+                f"  {qo.wealth_loss_aud:>12,.0f} {qo.compounder_loss_aud:>10,.0f} {qo.recovery_years:>7.1f}y {post_forced:>8s}"
+                f"  {d_sign}{comp_delta:>9,.0f} {r_sign}{recov_delta:>7.1f}y"
+            )
+        click.echo()
+
+    # Per-portfolio detail
+    for label, results in all_run_results:
+        port = pv if label == "PRE-TRADE" else projected_pv
+        label_str = f" ({label})" if projected_pv else ""
+
+        click.echo(click.style(f"\n=== STRESS SCENARIOS{label_str}: AUD {port.total_aud:,.2f} ===\n", bold=True))
+
+        # Summary table
+        click.echo(f"  {'Scenario':<38s}  {'Wealth Loss':>12s}  {'Comp. Damage':>14s}  {'Recovery':>10s}  {'Forced Sell?'}")
+        click.echo(f"  {'-'*100}")
+        for r in results:
+            o = r.objectives
+            forced = click.style("YES", fg="red", bold=True) if o.forced_liquidation else click.style("No", fg="green")
+            click.echo(
+                f"  {r.scenario_name:<38s}  "
+                f"AUD {o.wealth_loss_aud:>10,.0f}  "
+                f"AUD {o.compounder_loss_aud:>12,.0f}  "
+                f"{o.recovery_years:>8.1f} yrs  "
+                f"{forced}"
+            )
+
+        # Detail per scenario
+        for r in results:
+            o = r.objectives
+            click.echo(f"\n{'='*70}")
+            click.echo(click.style(f"  {r.scenario_name}{label_str}", bold=True))
+            click.echo(f"  {r.description}\n")
+
+            color = "red" if o.forced_liquidation else "green"
+            icon = "✗" if o.forced_liquidation else "✓"
+            click.echo(click.style(f"  {icon} SURVIVABILITY: {o.forced_liquidation_detail}", fg=color))
+
+            color = "red" if not o.income_bridge_intact else "green"
+            click.echo(click.style(
+                f"  {'✗' if not o.income_bridge_intact else '✓'} INCOME BRIDGE: "
+                f"{o.income_bridge_months_post:.0f} months covered "
+                f"(was {o.income_bridge_months_pre:.0f}, lost {o.income_bridge_months_lost:.0f})",
+                fg=color,
+            ))
+
+            if o.compounder_loss_aud > 0:
+                click.echo(click.style(
+                    f"  ⚠ COMPOUNDING: Lost AUD {o.compounder_loss_aud:,.0f} "
+                    f"({o.compounder_loss_pct:.0f}% of compounders). "
+                    f"Recovery: {o.recovery_years:.1f} years at 6.5% real.",
+                    fg="yellow",
+                ))
+            else:
+                click.echo(click.style("  ✓ COMPOUNDING: No compounder loss.", fg="green"))
+
+            if o.optionality_pre_aud > 0:
+                opt_word = "gained" if o.optionality_change_pct > 0 else "lost"
+                color = "green" if o.optionality_performed else "yellow"
+                performed = "performed" if o.optionality_performed else "did NOT offset"
+                click.echo(click.style(
+                    f"  {'✓' if o.optionality_performed else '⚠'} OPTIONALITY: "
+                    f"{opt_word} {abs(o.optionality_change_pct):.0f}% "
+                    f"(AUD {o.optionality_pre_aud:,.0f} → {o.optionality_post_aud:,.0f}). "
+                    f"Crisis insurance {performed}.",
+                    fg=color,
+                ))
+
+            click.echo(
+                f"  ◉ REAL WEALTH: AUD {o.total_pre_aud:,.0f} → {o.total_post_aud:,.0f} "
+                f"({o.wealth_loss_pct:+.1f}%, AUD {o.wealth_loss_aud:,.0f} lost)"
+            )
+
+            if detail:
+                click.echo(f"\n  Per-holding drawdowns:")
+                click.echo(f"  {'Ticker':<14s}  {'Role':<12s}  {'Pre':>12s}  {'DD':>8s}  {'Post':>12s}  {'Source':<10s}")
+                click.echo(f"  {'-'*74}")
+                for hs in sorted(r.holding_stresses, key=lambda x: x.drawdown_pct):
+                    role = hs.capital_role or "—"
+                    click.echo(
+                        f"  {hs.ticker:<14s}  {role:<12s}  {hs.pre_stress_aud:>12,.0f}  "
+                        f"{hs.drawdown_pct:>+7.1f}%  {hs.post_stress_aud:>12,.0f}  {hs.source:<10s}"
+                    )
+
+            if r.breaches:
+                click.echo(click.style(f"\n  Rule breaches under stress ({len(r.breaches)}):", dim=True))
+                for b in r.breaches:
+                    click.echo(click.style(f"    [{b.rule_id}] {b.detail}", dim=True))
+
+
+@cli.command("correlations")
+@click.option("--window", type=click.Choice(["60", "252"]), default="252",
+              help="Rolling window in trading days (default: 252).")
+@click.option("--stress-only", is_flag=True, help="Only show stress-period correlations.")
+@click.option("--detail", is_flag=True, help="Show full pairwise table and group validation.")
+def correlations_cmd(window, stress_only, detail):
+    """Does your diversification actually work when it matters?
+
+    Tests: does the stabiliser stabilise in a crisis? Does optionality
+    provide crisis alpha? Are compounders truly diversified or secretly
+    the same bet?
+    """
+    from src.portfolio.valuation import compute_valuation
+    from src.analytics.correlation import compute_correlations
+
+    pv = compute_valuation()
+    win = int(window)
+
+    click.echo(f"\nComputing {win}-day rolling correlations...")
+    report = compute_correlations(pv, window=win, stress_only=stress_only)
+    click.echo(f"Stress periods identified: {report.stress_periods_used} trading days\n")
+
+    # === OBJECTIVE-LEVEL ASSESSMENTS ===
+    click.echo(click.style("=== DOES YOUR DIVERSIFICATION WORK? ===\n", bold=True))
+
+    assess_color = {"protective": "green", "neutral": "cyan", "co-moving": "red", "unknown": "white"}
+    assess_icon = {"protective": "✓", "neutral": "◉", "co-moving": "✗", "unknown": "?"}
+    div_color = {"well-diversified": "green", "moderate": "cyan", "concentrated": "yellow",
+                 "false diversification": "red", "N/A": "white", "unknown": "white"}
+
+    # 1. Does stabiliser protect?
+    if report.stabiliser_protects:
+        a = report.stabiliser_protects
+        color = assess_color.get(a.assessment, "white")
+        icon = assess_icon.get(a.assessment, "?")
+        click.echo(click.style(f"  {icon} STABILISER PROTECTION [{a.assessment.upper()}]", fg=color, bold=True))
+        click.echo(f"    {a.detail}")
+        click.echo()
+
+    # 2. Does optionality perform?
+    if report.optionality_performs:
+        a = report.optionality_performs
+        color = assess_color.get(a.assessment, "white")
+        icon = assess_icon.get(a.assessment, "?")
+        click.echo(click.style(f"  {icon} OPTIONALITY AS CRISIS INSURANCE [{a.assessment.upper()}]", fg=color, bold=True))
+        click.echo(f"    {a.detail}")
+        click.echo()
+
+    # 3. Compounder diversification
+    if report.compounder_diversity:
+        d = report.compounder_diversity
+        color = div_color.get(d.assessment, "white")
+        click.echo(click.style(f"  ◉ COMPOUNDER DIVERSIFICATION [{d.assessment.upper()}]", fg=color, bold=True))
+        click.echo(f"    {d.detail}")
+        if d.highest_pair != "N/A":
+            click.echo(f"    Most correlated pair: {d.highest_pair}")
+        click.echo()
+
+    # All role diversifications
+    for rd in report.role_diversifications:
+        if rd.role == "compounder":
+            continue  # already shown
+        color = div_color.get(rd.assessment, "white")
+        click.echo(click.style(f"  ◉ {rd.role.upper()} DIVERSIFICATION [{rd.assessment.upper()}]", fg=color))
+        click.echo(f"    {rd.detail}")
+        click.echo()
+
+    # Flagged pairs that matter
+    flagged = [p for p in report.pair_results if p.flag is not None]
+    if flagged:
+        click.echo(click.style(f"--- Actionable Findings ({len(flagged)} pairs) ---\n", bold=True))
+        for p in flagged:
+            icon = "⚠" if p.flag == "over-grouped" else "🔍"
+            color = "yellow" if p.flag == "over-grouped" else "cyan"
+            click.echo(click.style(f"  {icon} {p.detail}", fg=color))
+        click.echo()
+
+    if not detail:
+        return
+
+    # Supporting: group validation
+    click.echo(click.style("--- Supporting: Stress Group Tag Validation ---\n", bold=True))
+    for gv in report.group_validations:
+        icon = "✓" if gv.valid else "✗"
+        color = "green" if gv.valid else "red"
+        click.echo(click.style(f"  {icon} {gv.group_name}: {', '.join(gv.tickers)}", fg=color))
+        click.echo(f"    {gv.detail}  Weakest: {gv.weakest_pair}")
+
+    # Supporting: full pairwise table
+    click.echo(click.style("\n--- Supporting: Top Pairwise Correlations ---\n", bold=True))
+    click.echo(f"  {'Pair':<28s}  {'Role A':<12s}  {'Role B':<12s}  {'60d':>6s}  {'Stress':>7s}  {'Flag'}")
+    click.echo(f"  {'-'*85}")
+    sorted_pairs = sorted(
+        report.pair_results,
+        key=lambda p: -(abs(p.corr_stress) if p.corr_stress is not None
+                        else abs(p.corr_60d) if p.corr_60d is not None else 0),
+    )
+    for p in sorted_pairs[:25]:
+        ra = p.role_a or "—"
+        rb = p.role_b or "—"
+        c60 = f"{p.corr_60d:.2f}" if p.corr_60d is not None else "—"
+        cstr = f"{p.corr_stress:.2f}" if p.corr_stress is not None else "—"
+        flag = p.flag or ""
+        click.echo(f"  {p.ticker_a}–{p.ticker_b:<25s}  {ra:<12s}  {rb:<12s}  {c60:>6s}  {cstr:>7s}  {flag}")
+
+
 @cli.group("config")
 def config_group():
     """Manage stored credentials and settings (~/.config/towsand/credentials)."""

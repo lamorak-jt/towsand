@@ -158,6 +158,159 @@ class PortfolioValuation:
         return result
 
 
+def project_valuation(
+    pv: "PortfolioValuation",
+    trades: list[dict],
+    db_path=None,
+) -> "PortfolioValuation":
+    """Apply hypothetical trades to produce a projected portfolio.
+
+    Args:
+        pv: Current portfolio valuation.
+        trades: List of trade dicts, each with:
+            - ticker (str): instrument ticker
+            - delta_aud (float): AUD amount change (+buy, -sell)
+            - capital_role (str, optional): override role for new instruments
+            - currency (str, optional): override currency for new instruments (default AUD)
+            - instrument_type (str, optional): override type for new instruments
+        db_path: Optional database path override.
+
+    Returns:
+        A new PortfolioValuation with trades applied.
+
+    For existing holdings, scales the position proportionally.
+    For new instruments (not in current holdings), looks up classification
+    data from the database and creates a new holding entry.
+    Net cash impact (sum of sells minus buys) adjusts investable cash.
+    """
+    from copy import deepcopy
+
+    projected = PortfolioValuation()
+    projected.cash = deepcopy(pv.cash)
+
+    trade_map: dict[str, float] = {}
+    for t in trades:
+        ticker = t["ticker"]
+        trade_map[ticker] = trade_map.get(ticker, 0) + t["delta_aud"]
+
+    # Apply deltas to existing holdings
+    seen_tickers: set[str] = set()
+    for h in pv.holdings:
+        delta = trade_map.get(h.ticker, 0)
+        new_value = h.value_aud + delta
+        seen_tickers.add(h.ticker)
+
+        if new_value <= 0:
+            continue  # fully sold
+
+        scale = new_value / h.value_aud if h.value_aud > 0 else 0
+        projected.holdings.append(HoldingValue(
+            ticker=h.ticker,
+            name=h.name,
+            instrument_type=h.instrument_type,
+            exchange=h.exchange,
+            currency=h.currency,
+            country=h.country,
+            account_name=h.account_name,
+            institution_name=h.institution_name,
+            quantity=h.quantity * scale,
+            price=h.price,
+            price_date=h.price_date,
+            local_value=h.local_value * scale,
+            fx_rate=h.fx_rate,
+            value_aud=new_value,
+            capital_role=h.capital_role,
+            macro_drivers=h.macro_drivers,
+            corporate_group=h.corporate_group,
+        ))
+
+    # Build a lookup of per-ticker overrides from trade dicts
+    trade_overrides: dict[str, dict] = {}
+    for t in trades:
+        ticker = t["ticker"]
+        trade_overrides[ticker] = t
+
+    # Add new instruments not currently held
+    new_tickers = {t: d for t, d in trade_map.items() if t not in seen_tickers and d > 0}
+    if new_tickers:
+        from src.db.connection import get_connection
+        with get_connection(db_path) as conn:
+            for ticker, amount_aud in new_tickers.items():
+                overrides = trade_overrides.get(ticker, {})
+
+                row = conn.execute("""
+                    SELECT i.ticker, i.name, i.instrument_type, i.exchange,
+                           i.currency, i.country_domicile,
+                           ic.capital_role, ic.macro_drivers, ic.corporate_group
+                    FROM instruments i
+                    LEFT JOIN instrument_classifications ic ON ic.instrument_id = i.id
+                    WHERE i.ticker = ?
+                """, (ticker,)).fetchone()
+
+                if row:
+                    currency = overrides.get("currency", row["currency"])
+                    fx_rate = _get_fx_rate(conn, currency) or 1.0
+                    local_value = amount_aud / fx_rate
+                    price_row = conn.execute("""
+                        SELECT close_price, date FROM prices p
+                        JOIN instruments i ON i.id = p.instrument_id
+                        WHERE i.ticker = ? ORDER BY p.date DESC LIMIT 1
+                    """, (ticker,)).fetchone()
+                    price = price_row["close_price"] if price_row else 0
+                    price_date = price_row["date"] if price_row else ""
+                    quantity = local_value / price if price > 0 else 0
+
+                    projected.holdings.append(HoldingValue(
+                        ticker=row["ticker"],
+                        name=row["name"] or ticker,
+                        instrument_type=overrides.get("instrument_type", row["instrument_type"]),
+                        exchange=row["exchange"],
+                        currency=currency,
+                        country=row["country_domicile"],
+                        account_name="(projected)",
+                        institution_name="(projected)",
+                        quantity=quantity,
+                        price=price,
+                        price_date=price_date,
+                        local_value=local_value,
+                        fx_rate=fx_rate,
+                        value_aud=amount_aud,
+                        capital_role=overrides.get("capital_role", row["capital_role"]),
+                        macro_drivers=row["macro_drivers"],
+                        corporate_group=overrides.get("corporate_group", row["corporate_group"]),
+                    ))
+                else:
+                    logger.warning(
+                        "Instrument %s not in database — using trade-spec metadata for projection",
+                        ticker,
+                    )
+                    currency = overrides.get("currency", "AUD")
+                    projected.holdings.append(HoldingValue(
+                        ticker=ticker, name=ticker,
+                        instrument_type=overrides.get("instrument_type", "etf"),
+                        exchange=None,
+                        currency=currency, country=None,
+                        account_name="(projected)", institution_name="(projected)",
+                        quantity=0, price=0, price_date="",
+                        local_value=amount_aud, fx_rate=1.0, value_aud=amount_aud,
+                        capital_role=overrides.get("capital_role"),
+                        macro_drivers=overrides.get("macro_drivers"),
+                        corporate_group=overrides.get("corporate_group"),
+                    ))
+
+    # Adjust investable cash by net trade flow (sells add, buys consume)
+    net_cash_delta = -sum(trade_map.values())  # negative delta_aud = sell = cash in
+    if net_cash_delta != 0 and projected.cash:
+        # Apply to the first investable cash balance
+        for cv in projected.cash:
+            if cv.is_investable:
+                cv.balance += net_cash_delta / cv.fx_rate
+                cv.value_aud += net_cash_delta
+                break
+
+    return projected
+
+
 def _get_fx_rate(conn, from_currency: str, to_currency: str = "AUD") -> float | None:
     """Get the latest FX rate for a currency pair."""
     if from_currency == to_currency:

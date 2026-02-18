@@ -166,19 +166,31 @@ All rules from `portfolio-management-rules.md` implemented as discrete checks in
 - [ ] Real return (adjust for CPI)
 - [ ] Command: `towsand returns [--period 1y|3y|5y|ytd]`
 
-### 5.2 Correlation analysis
-- [ ] Calculate rolling pairwise correlation matrix (e.g. 60-day, 252-day)
-- [ ] Identify stress-period correlations (periods where equity index drawdown >15%)
-- [ ] Flag pairs with stress correlation >0.7
-- [ ] Command: `towsand correlations [--stress-only]`
+### 5.2 Constraint fragility / sensitivity analysis ✓
+- [x] For each tight constraint (buffer <5%), compute the market move that would breach it
+- [x] Model relative asset moves: "X% rally in VGS relative to VAS pushes Rule 5.1 below 50%"
+- [x] Rank constraints by fragility (smallest buffer first) with directional sensitivity
+- [x] Command: `towsand sensitivity` — show fragility table with breach thresholds
+- [x] Module: `src/analytics/sensitivity.py`
 
-### 5.3 Drawdown simulation
-- [ ] Scenario: apply −35% to equity holdings, model stabiliser drawdown, check if long-term assets need liquidation
-- [ ] Scenario: AUD ±20% move
-- [ ] Scenario: credit spread widening (proxy via relevant ETF/bond price moves)
-- [ ] Command: `towsand stress [--scenario equity_crash|aud_shock|credit_widen]`
+### 5.3 Stress scenario pass/fail ✓
+- [x] Apply historical drawdown scenarios to current portfolio using actual price data from DB
+- [x] Scenarios: 2008 GFC, 2020 COVID drawdown, 2022 rate shock — using actual instrument-level drawdowns from price history
+- [x] For each scenario: recompute all compliance checks, report which constraints breach under stress
+- [x] Key question: "do any constraints breach under stress, and do I get forced into selling long-term assets?" (Rule 8.1)
+- [x] Flat 35% equity haircut as baseline, plus historical scenarios with real drawdown data
+- [x] Command: `towsand stress [--scenario flat35|covid2020|gfc2008|rates2022|all]`
+- [x] Module: `src/analytics/stress.py`
 
-### 5.4 Concentration & exposure reports
+### 5.4 Correlation validation ✓
+- [x] Compute actual 60-day and 252-day rolling correlations from price history in DB
+- [x] Compare computed stress-period correlations against manually tagged `stress_correlation_group` assignments
+- [x] Flag mismatches: pairs grouped together but actual correlation <0.5, or pairs NOT grouped but correlation >0.7
+- [x] Validate at portfolio level: are the correlation groups conservative enough?
+- [x] Command: `towsand correlations [--window 60|252] [--stress-only]`
+- [x] Module: `src/analytics/correlation.py`
+
+### 5.5 Concentration & exposure reports
 - [ ] Top 10 holdings by weight
 - [ ] Exposure by: country, currency, sector, macro driver, corporate group
 - [ ] Command: `towsand exposures --by [country|currency|sector|macro|group]`

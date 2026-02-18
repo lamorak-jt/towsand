@@ -23,14 +23,26 @@ towsand classify list
 towsand portfolio exposures
 ```
 
-### 2. Read strategy context
+### 2. Run objective-level analytics
+
+```bash
+cd /home/jtlamorak/towsand && source .venv/bin/activate
+
+# Sensitivity: how fragile are the strategic objectives?
+towsand sensitivity
+
+# Stress: what happens to objectives under stress?
+towsand stress
+```
+
+### 3. Read strategy context
 
 Read these files:
 - `current-finances/portfolio-management-rules.md` — rules and constraints
 - `current-finances/strategy-assumptions.md` — strategy context
 - `current-finances/classification-recommendations.md` — classification rationale and known issues
 
-### 3. Identify gaps
+### 4. Identify gaps
 
 Calculate the dollar gap for each dimension:
 - **Role gaps**: target band midpoints vs actual (e.g. compounder target ~57.5%, actual 43.5% → need AUD X more)
@@ -38,7 +50,7 @@ Calculate the dollar gap for each dimension:
 - **Missing exposures**: inflation-linked, optionality, etc.
 - **Concentration risk**: what to reduce
 
-### 4. Generate recommendations
+### 5. Generate recommendations
 
 For each recommendation, provide:
 
@@ -53,7 +65,7 @@ For each recommendation, provide:
 - **Risk note**: What risk this introduces or removes
 ```
 
-### 5. Apply Rule 9.2 gate (no-action rule)
+### 6. Apply Rule 9.2 gate (no-action rule)
 
 **Before generating any recommendations**, check whether action is warranted:
 
@@ -63,14 +75,14 @@ For each recommendation, provide:
 
 Warnings alone (without breaches or triggers) do not justify action — they are monitoring items.
 
-### 6. Prioritise (when action IS warranted)
+### 7. Prioritise (when action IS warranted)
 
 Order recommendations by:
 1. **Fix breaches** — mandatory, 30-day deadline per rules
 2. **Address trigger-driven concerns** — if a trigger is active, address the specific risk it signals
 3. **Reduce warnings** — only if actions to fix breaches naturally also address warnings
 
-### 7. Validate recommendations
+### 8. Validate recommendations
 
 Before presenting, check each recommendation against ALL rules:
 - Does the buy create a new position size breach?
@@ -79,7 +91,37 @@ Before presenting, check each recommendation against ALL rules:
 - Does it change the currency balance?
 - Does the sell trigger a taxable event? (flag, don't model)
 
-### 8. Output
+### 8a. Stress-test the post-trade portfolio
+
+After computing trade recommendations, create a trades JSON file and run both pre-trade and post-trade stress/sensitivity analysis:
+
+```bash
+# Write the trade deltas to a temp file
+cat > /tmp/trades.json << 'EOF'
+[
+  {"ticker": "FLBL", "delta_aud": -120000},
+  {"ticker": "VAS.AX", "delta_aud": 80000}
+]
+EOF
+
+# Run pre/post comparison
+towsand stress --trades /tmp/trades.json
+towsand sensitivity --trades /tmp/trades.json
+```
+
+Substitute the actual recommended trades into the JSON. Each entry has `ticker` and `delta_aud` (+buy, -sell).
+
+From the output, assess:
+
+1. **Survivability**: Does the post-trade portfolio survive all stress scenarios without forced liquidation? If any scenario now forces selling, the recommendation **fails**.
+2. **Income bridge**: Post-trade stabiliser covers how many months under stress? Compare to pre-trade.
+3. **Compounding damage under stress**: How much more/less compounder capital is at risk post-trade? Compare recovery years.
+4. **Optionality**: Is optionality now large enough that it materially offsets losses in stress?
+5. **Fragility trade-offs**: If the recommendations create new tight constraints (e.g., Rule 5.1 at 50.4%), state explicitly: "This recommendation trades [X breach] for [Y fragility]. The fragility is acceptable because [reason]."
+
+Include a **"Post-trade objective assessment"** section in the report with the pre/post comparison table from `towsand stress --trades`.
+
+### 9. Output
 
 Always save the recommendation report to `reports/` as:
 

@@ -41,27 +41,53 @@ towsand prices list
 towsand portfolio exposures
 ```
 
-### 2. Read context documents
+### 2. Run objective-level analytics
+
+```bash
+cd /home/jtlamorak/towsand && source .venv/bin/activate
+
+# Sensitivity: how fragile are the strategic objectives?
+towsand sensitivity
+
+# Stress: what happens to objectives under historical drawdowns?
+towsand stress --detail
+
+# Correlations: does diversification work when it matters?
+towsand correlations --detail
+```
+
+If the report includes trade recommendations, also run pre/post comparison:
+
+```bash
+# Create trades JSON from recommendations, then:
+towsand stress --trades /tmp/trades.json --detail
+towsand sensitivity --trades /tmp/trades.json
+```
+
+### 3. Read context documents
 
 Read these files for strategic context:
 - `current-finances/portfolio-management-rules.md` — the rules being enforced
 - `current-finances/strategy-assumptions.md` — strategic context
 - `current-finances/classification-recommendations.md` — current classification rationale
 
-### 3. Analyse
+### 4. Analyse
 
 Using the command output and context documents, analyse:
 
 1. **Portfolio composition** — total value, breakdown by role/type/currency/country/institution
 2. **Compliance status** — every pass/warning/breach with explanation in plain language
-3. **Capital role assessment** — are roles correctly sized? What's driving any breaches?
-4. **Risk concentrations** — position size issues, macro driver exposure, correlation groups, corporate group concentration
-5. **Currency & hedging** — is the AUD/international split appropriate for the strategy?
-6. **Stabiliser health** — liquidity, duration distribution, inflation coverage, expense coverage months
-7. **Key concerns** — the 2-3 most important issues requiring action, ranked by urgency
-8. **Deployment opportunities** — where should excess stabiliser (cash) be deployed?
+3. **Constraint fragility** — which rules are tightest? What market moves would breach them? Include the `towsand sensitivity` output as a fragility table.
+4. **Stress scenario pass/fail** — for each scenario (flat 35%, COVID 2020, GFC 2008, 2022 rate shock): which constraints breach? Is Rule 8.1 (forced liquidation) triggered? Include the `towsand stress` output as a stress results table.
+5. **Correlation validation** — are the stress correlation groups (au_equity_beta, credit_spread, etc.) validated by actual price data? Flag any mismatches from `towsand correlations`.
+6. **Capital role assessment** — are roles correctly sized? What's driving any breaches?
+7. **Risk concentrations** — position size issues, macro driver exposure, correlation groups, corporate group concentration
+8. **Currency & hedging** — is the AUD/international split appropriate for the strategy?
+9. **Stabiliser health** — liquidity, duration distribution, inflation coverage, expense coverage months
+10. **Key concerns** — the 2-3 most important issues requiring action, ranked by urgency
+11. **Deployment opportunities** — where should excess stabiliser (cash) be deployed?
 
-### 4. Write report
+### 5. Write report
 
 Create the report at `reports/YYYY-MM-DD-portfolio-report.md` using today's date.
 
@@ -82,6 +108,30 @@ Structure:
 [Table: rule | status | detail]
 [Plain-language explanation of each warning and breach]
 
+## Objective-Level Sensitivity
+[From `towsand sensitivity` — assess each objective:]
+- Income bridge: how many months covered, what market move breaks it
+- Forced liquidation: how far from selling long-term assets
+- Compounding at risk: AUD damage and recovery years per 10%/35% decline
+- AUD liability matching: how much non-AUD outperformance weakens it
+- Optionality sizing: is crisis insurance large enough to matter?
+
+## Stress Scenario Results
+[From `towsand stress --detail` — for each scenario, report against objectives:]
+- Survivability: forced to sell? YES/NO
+- Income bridge: months of expenses still covered
+- Compounding damage: AUD lost + years to recover at 6.5% real
+- Optionality payoff: did it perform its crisis function?
+- Real wealth: total AUD impact
+[Per-scenario holding-level drawdowns as supporting detail]
+
+## Diversification Quality
+[From `towsand correlations --detail`:]
+- Does stabiliser protect against compounder losses in stress?
+- Does optionality provide crisis alpha?
+- Are compounders truly diversified or the same bet wearing different tickers?
+- Flagged pairs: hidden concentration or over-estimated groupings
+
 ## Risk Analysis
 ### Position Concentration
 ### Macro Driver Exposure
@@ -98,7 +148,7 @@ Structure:
 [FX rates, price dates, data freshness notes]
 ```
 
-### 5. Confirm
+### 6. Confirm
 
 After writing the report, show the user:
 - The file path

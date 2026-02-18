@@ -22,6 +22,17 @@ All percentage-based rules (role bands, position size, concentration limits, cur
 
 **Implementation:** Cash balances with `account_type = 'credit'` or accounts tagged as receivables are excluded from the investable-assets denominator. The `parameters` table stores `exclude_account_ids` as a JSON list of account IDs to exclude.
 
+### 0.1 Instrument Universe
+
+This portfolio is permanently restricted to:
+
+- **Long-only** positions (no short selling)
+- **Non-leveraged** instruments (no margin, futures, or leveraged ETFs)
+- **Non-derivative** instruments (no options, warrants, or structured products)
+- **Publicly listed** or **deposit-based** instruments only (no private assets, hedge funds, or illiquid alternatives)
+
+This constraint is not subject to review triggers (Rule 9.1). All other rules assume this instrument universe.
+
 ---
 
 ## 1. Capital Role Constraints (Top-Level)
@@ -137,6 +148,8 @@ must not exceed **30%** of portfolio value.
 - **AUD exposure:** 50–70%
 - **Non-AUD exposure:** 30–50%
 
+Currency is classified by **economic exposure**, not listing currency. An AUD-listed ETF tracking international equities or USD-priced commodities is non-AUD. An AUD-listed company with Australian operations, costs, and regulatory domicile is AUD.
+
 ### 5.2 Hedging Rule
 
 - At least **40%** of international growth assets must be unhedged.
@@ -155,9 +168,11 @@ must not exceed **30%** of portfolio value.
 
 Optionality capital must satisfy **two of three**:
 
-- Defined downside (premium or capped loss)
+- Bounded downside (loss structurally capped)
 - Non-linear upside (>3x in favourable regime)
 - Stress-period outperformance
+
+**Criterion 1 — instrument universe context:** Under Rule 0.1 (non-leveraged, non-derivative, long-only), maximum loss on any position is the invested amount. Downside is inherently bounded for all instruments within Rule 3.1 position limits. Criterion 1 is therefore satisfied by default. Rule 6.2 separately prevents carry/yield instruments from qualifying as optionality.
 
 ### 6.2 Yield Exclusion Rule
 
