@@ -297,10 +297,14 @@ def _assess_intra_role(
         if p.role_a == role and p.role_b == role
     ]
 
+    # Count members from ALL pairs (not just intra), to correctly count roles
+    # with a single instrument that have no intra-role pairs.
     tickers = set()
-    for p in intra_pairs:
-        tickers.add(p.ticker_a)
-        tickers.add(p.ticker_b)
+    for p in report.pair_results:
+        if p.role_a == role:
+            tickers.add(p.ticker_a)
+        if p.role_b == role:
+            tickers.add(p.ticker_b)
 
     if len(tickers) < 2:
         rd = RoleDiversification(

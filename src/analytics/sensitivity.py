@@ -110,31 +110,45 @@ def _assess_income_bridge(
         trigger = "Already failed."
         consequence = "Must fund gap from employment income or sell growth assets."
     elif stab_holdings > 0:
-        # What % decline in stabiliser holdings wipes the excess?
         excess_aud = stabiliser - min_stab
-        # Cash doesn't decline, so the decline comes from holdings only
-        if stab_holdings > 0:
-            max_decline_pct = (excess_aud / stab_holdings) * 100
-        else:
-            max_decline_pct = float("inf")
+        stab_cash = stabiliser - stab_holdings
+        # Cash doesn't decline in market stress, so only holdings can lose value.
+        # If cash alone covers the floor, a 100% wipeout of holdings won't break it.
+        floor_unbreakable = stab_cash >= min_stab
+        max_decline_pct = min((excess_aud / stab_holdings) * 100, 100.0) if stab_holdings > 0 else 100.0
 
-        if max_decline_pct > 50:
+        if floor_unbreakable:
             severity = "safe"
-        elif max_decline_pct > 20:
-            severity = "watch"
-        elif max_decline_pct > 10:
-            severity = "fragile"
+            headline = (
+                f"Income bridge covers {months_covered:.0f} months "
+                f"({excess_months:.0f} months excess). Cash alone "
+                f"(AUD {stab_cash:,.0f}) exceeds the 24-month floor — "
+                f"market declines in stabiliser holdings cannot break the bridge."
+            )
+            trigger = (
+                f"Stabiliser holdings AUD {stab_holdings:,.0f} could go to zero "
+                f"and cash AUD {stab_cash:,.0f} still covers "
+                f"{stab_cash / monthly:.0f} months."
+            )
         else:
-            severity = "critical"
+            if max_decline_pct > 50:
+                severity = "safe"
+            elif max_decline_pct > 20:
+                severity = "watch"
+            elif max_decline_pct > 10:
+                severity = "fragile"
+            else:
+                severity = "critical"
 
-        headline = (
-            f"Income bridge covers {months_covered:.0f} months "
-            f"({excess_months:.0f} months excess over 24-month floor)."
-        )
-        trigger = (
-            f"A {max_decline_pct:.0f}% decline in stabiliser holdings "
-            f"(AUD {stab_holdings:,.0f}) would break the 24-month floor."
-        )
+            headline = (
+                f"Income bridge covers {months_covered:.0f} months "
+                f"({excess_months:.0f} months excess over 24-month floor)."
+            )
+            trigger = (
+                f"A {max_decline_pct:.0f}% decline in stabiliser holdings "
+                f"(AUD {stab_holdings:,.0f}) would break the 24-month floor."
+            )
+
         consequence = (
             f"Below 24 months: must sell compounders to fund living expenses. "
             f"Each month of shortfall = AUD {monthly:,.0f} of compounding capital destroyed."
@@ -290,7 +304,8 @@ def _assess_currency_liability(report: SensitivityReport, pv: PortfolioValuation
     if growth_total <= 0:
         return
 
-    aud_growth = sum(h.value_aud for h in growth if h.currency == "AUD")
+    # Use economic_currency (underlying exposure), not listing currency
+    aud_growth = sum(h.value_aud for h in growth if (h.economic_currency or h.currency) == "AUD")
     non_aud_growth = growth_total - aud_growth
     aud_pct = aud_growth / growth_total * 100
 
@@ -302,7 +317,8 @@ def _assess_currency_liability(report: SensitivityReport, pv: PortfolioValuation
     x_pct = x * 100
 
     non_aud_tickers = sorted(
-        [h for h in growth if h.currency != "AUD"], key=lambda h: -h.value_aud)
+        [h for h in growth if (h.economic_currency or h.currency) != "AUD"],
+        key=lambda h: -h.value_aud)
     top = ", ".join(h.ticker for h in non_aud_tickers[:3])
 
     if aud_pct < 50:
@@ -403,31 +419,41 @@ def _collect_rule_buffers(
     equity_types = {"equity", "etf", "listed_fund"}
     credit_types = {"credit"}
 
-    # Position caps
+    # Position caps — use asset_class for determining which cap applies
+    equity_classes = {"equity", "infrastructure"}
+    credit_classes = {"credit"}
+
     for h in pv.holdings:
         pct = h.value_aud / total * 100
-        if h.instrument_type in equity_types:
-            cap = 10.0
-            buf = cap - pct
-            if buf < 3.0:
-                move = (cap/100 * total - h.value_aud) / (h.value_aud * (1 - cap/100)) * 100 \
-                    if h.value_aud > 0 else 0
-                report.rule_buffers.append(RuleBuffer(
-                    rule_id="3.1-eq", description=f"{h.ticker} equity cap",
-                    current_value=pct, limit=cap, buffer_pct=buf,
-                    breach_move=f"{h.ticker} rallies {move:.0f}% (rest flat)",
-                ))
-        if h.instrument_type in credit_types:
+        ac = h.asset_class or h.instrument_type
+
+        if ac in credit_classes:
             cap = 7.0
-            buf = cap - pct
-            if buf < 3.0:
+        elif ac in equity_classes or h.instrument_type in equity_types:
+            cap = 10.0
+        else:
+            continue
+
+        buf = cap - pct
+        if buf < 3.0:
+            rule_id = "3.1-cr" if ac in credit_classes else "3.1-eq"
+            cap_label = "credit" if ac in credit_classes else "equity"
+
+            if buf < 0:
+                breach_move = (
+                    f"ALREADY IN BREACH: {h.ticker} at {pct:.1f}% "
+                    f"(cap {cap:.0f}%), over by {abs(buf):.1f}pp"
+                )
+            else:
                 move = (cap/100 * total - h.value_aud) / (h.value_aud * (1 - cap/100)) * 100 \
                     if h.value_aud > 0 else 0
-                report.rule_buffers.append(RuleBuffer(
-                    rule_id="3.1-cr", description=f"{h.ticker} credit cap",
-                    current_value=pct, limit=cap, buffer_pct=buf,
-                    breach_move=f"{h.ticker} rallies {move:.0f}% (rest flat)",
-                ))
+                breach_move = f"{h.ticker} rallies {move:.0f}% (rest flat)"
+
+            report.rule_buffers.append(RuleBuffer(
+                rule_id=rule_id, description=f"{h.ticker} {cap_label} cap",
+                current_value=pct, limit=cap, buffer_pct=buf,
+                breach_move=breach_move,
+            ))
 
     # Issuer concentration
     groups: dict[str, float] = {}

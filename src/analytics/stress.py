@@ -55,21 +55,23 @@ SCENARIOS = {
     },
 }
 
+# Keyed by asset_class (economic nature), not instrument_type (wrapper).
+# This prevents bond ETFs from getting equity-like proxy drawdowns.
 PROXY_DRAWDOWNS = {
     "covid2020": {
-        "equity": -0.35, "etf": -0.30, "credit": -0.15,
-        "listed_fund": -0.25, "govt_bond_nominal": 0.02,
-        "govt_bond_indexed": 0.0, "cash": 0.0, "other": -0.20,
+        "equity": -0.35, "credit": -0.15, "infrastructure": -0.25,
+        "govt_bond_nominal": 0.02, "govt_bond_indexed": 0.0,
+        "cash_equivalent": -0.01, "commodity": -0.10, "other": -0.20,
     },
     "gfc2008": {
-        "equity": -0.55, "etf": -0.45, "credit": -0.30,
-        "listed_fund": -0.40, "govt_bond_nominal": 0.10,
-        "govt_bond_indexed": 0.05, "cash": 0.0, "other": -0.30,
+        "equity": -0.55, "credit": -0.30, "infrastructure": -0.40,
+        "govt_bond_nominal": 0.10, "govt_bond_indexed": 0.05,
+        "cash_equivalent": 0.0, "commodity": 0.05, "other": -0.30,
     },
     "rates2022": {
-        "equity": -0.25, "etf": -0.20, "credit": -0.10,
-        "listed_fund": -0.15, "govt_bond_nominal": -0.15,
-        "govt_bond_indexed": -0.10, "cash": 0.0, "other": -0.15,
+        "equity": -0.25, "credit": -0.10, "infrastructure": -0.15,
+        "govt_bond_nominal": -0.15, "govt_bond_indexed": -0.10,
+        "cash_equivalent": -0.02, "commodity": 0.05, "other": -0.15,
     },
 }
 
@@ -124,6 +126,11 @@ class StressResult:
     description: str
     objectives: ObjectiveAssessment = field(default_factory=ObjectiveAssessment)
     holding_stresses: list[HoldingStress] = field(default_factory=list)
+    # Data source transparency
+    historical_count: int = 0
+    proxy_count: int = 0
+    proxy_only: bool = False  # True when ALL non-synthetic drawdowns are proxy-based
+    data_source_note: str = ""
     # Compliance kept as secondary evidence
     compliance_results: list[CheckResult] = field(default_factory=list)
     breaches: list[CheckResult] = field(default_factory=list)
@@ -173,6 +180,8 @@ def _apply_drawdown(pv: PortfolioValuation, drawdowns: dict[str, float]) -> Port
             capital_role=h.capital_role,
             macro_drivers=h.macro_drivers,
             corporate_group=h.corporate_group,
+            asset_class=h.asset_class,
+            economic_currency=h.economic_currency,
         ))
     return stressed
 
@@ -292,7 +301,10 @@ def run_scenario(
             if historical_dd is not None:
                 dd, source = historical_dd, "historical"
             else:
-                dd, source = proxies.get(h.instrument_type, -0.20), "proxy"
+                # Use asset_class (economic nature) for proxy lookup, not instrument_type (wrapper)
+                proxy_key = h.asset_class or h.instrument_type
+                dd = proxies.get(proxy_key, proxies.get(h.instrument_type, -0.20))
+                source = "proxy"
             drawdowns[h.ticker] = dd
             holding_stresses.append(HoldingStress(
                 ticker=h.ticker, capital_role=h.capital_role,
@@ -301,6 +313,27 @@ def run_scenario(
             ))
 
     result.holding_stresses = holding_stresses
+
+    # Data source transparency
+    result.historical_count = sum(1 for hs in holding_stresses if hs.source == "historical")
+    result.proxy_count = sum(1 for hs in holding_stresses if hs.source == "proxy")
+    result.proxy_only = result.proxy_count > 0 and result.historical_count == 0
+    if scenario["type"] == "synthetic":
+        result.data_source_note = "Synthetic scenario — uniform haircut applied."
+    elif result.proxy_only:
+        result.data_source_note = (
+            f"⚠ ALL {result.proxy_count} holdings use asset-class proxy drawdowns "
+            f"(no actual price data available for the {scenario['start'][:4]} period). "
+            f"Treat as indicative, not historical."
+        )
+    elif result.proxy_count > 0:
+        result.data_source_note = (
+            f"{result.historical_count} holdings use actual historical drawdowns, "
+            f"{result.proxy_count} use asset-class proxies."
+        )
+    else:
+        result.data_source_note = "All holdings use actual historical price data."
+
     stressed_pv = _apply_drawdown(pv, drawdowns)
 
     with get_connection(db_path) as conn:

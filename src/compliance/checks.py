@@ -234,27 +234,29 @@ def check_position_size(pv: PortfolioValuation) -> list[CheckResult]:
         return results
 
     # Rule 3.1: Single equity ≤ 10%, single credit ≤ 7%, speculative ≤ 1%/3%
-    equity_types = {"equity", "etf", "listed_fund"}
-    credit_types = {"credit"}
+    # asset_class determines which cap applies (not instrument_type/wrapper).
+    # Credit instruments in an ETF wrapper are still credit for sizing purposes.
+    equity_classes = {"equity", "infrastructure"}
+    credit_classes = {"credit"}
     speculative_total = 0
 
     for h in pv.holdings:
         pct = (h.value_aud / total * 100) if total > 0 else 0
+        ac = h.asset_class or h.instrument_type  # fallback for unclassified
 
-        if h.instrument_type in equity_types:
-            if pct > 10:
-                results.append(CheckResult(
-                    "3.1-eq", f"Single Equity Cap: {h.ticker}", "breach",
-                    f"{h.ticker} at {pct:.1f}% (max 10%). AUD {h.value_aud:,.0f}.",
-                    value=pct, threshold=10,
-                ))
-
-        if h.instrument_type in credit_types:
+        if ac in credit_classes:
             if pct > 7:
                 results.append(CheckResult(
                     "3.1-cr", f"Single Credit Cap: {h.ticker}", "breach",
-                    f"{h.ticker} at {pct:.1f}% (max 7%). AUD {h.value_aud:,.0f}.",
+                    f"{h.ticker} ({ac}) at {pct:.1f}% (max 7%). AUD {h.value_aud:,.0f}.",
                     value=pct, threshold=7,
+                ))
+        elif ac in equity_classes or h.instrument_type in {"equity", "etf", "listed_fund"}:
+            if pct > 10:
+                results.append(CheckResult(
+                    "3.1-eq", f"Single Equity Cap: {h.ticker}", "breach",
+                    f"{h.ticker} ({ac}) at {pct:.1f}% (max 10%). AUD {h.value_aud:,.0f}.",
+                    value=pct, threshold=10,
                 ))
 
         # Check speculative flag from DB
@@ -377,7 +379,11 @@ def check_currency_exposure(pv: PortfolioValuation) -> list[CheckResult]:
         ))
         return results
 
-    aud_growth = sum(h.value_aud for h in growth_holdings if h.currency == "AUD")
+    # Use economic_currency (underlying exposure) when available, fall back to listing currency
+    aud_growth = sum(
+        h.value_aud for h in growth_holdings
+        if (h.economic_currency or h.currency) == "AUD"
+    )
     aud_pct = (aud_growth / growth_total * 100)
 
     # Rule 5.1: AUD 50-70%, non-AUD 30-50%
@@ -401,7 +407,7 @@ def check_currency_exposure(pv: PortfolioValuation) -> list[CheckResult]:
         ))
 
     # Rule 5.2: ≥40% of international growth assets unhedged
-    intl_growth = [h for h in growth_holdings if h.currency != "AUD"]
+    intl_growth = [h for h in growth_holdings if (h.economic_currency or h.currency) != "AUD"]
     intl_total = sum(h.value_aud for h in intl_growth)
     if intl_total > 0:
         unhedged = sum(h.value_aud for h in intl_growth if h.capital_role and not _is_hedged(h))

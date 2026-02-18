@@ -694,7 +694,10 @@ def stress_cmd(scenario, detail, trades_file):
             o = r.objectives
             click.echo(f"\n{'='*70}")
             click.echo(click.style(f"  {r.scenario_name}{label_str}", bold=True))
-            click.echo(f"  {r.description}\n")
+            click.echo(f"  {r.description}")
+            if r.data_source_note:
+                click.echo(click.style(f"  [{r.data_source_note}]", dim=True))
+            click.echo()
 
             color = "red" if o.forced_liquidation else "green"
             icon = "✗" if o.forced_liquidation else "✓"

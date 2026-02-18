@@ -32,6 +32,8 @@ class HoldingValue:
     capital_role: str | None = None
     macro_drivers: str | None = None
     corporate_group: str | None = None
+    asset_class: str | None = None
+    economic_currency: str | None = None
 
 
 @dataclass
@@ -171,8 +173,10 @@ def project_valuation(
             - ticker (str): instrument ticker
             - delta_aud (float): AUD amount change (+buy, -sell)
             - capital_role (str, optional): override role for new instruments
-            - currency (str, optional): override currency for new instruments (default AUD)
+            - currency (str, optional): override listing currency (default AUD)
             - instrument_type (str, optional): override type for new instruments
+            - asset_class (str, optional): economic asset class (equity/credit/govt_bond_nominal/etc.)
+            - economic_currency (str, optional): currency of economic exposure
         db_path: Optional database path override.
 
     Returns:
@@ -222,6 +226,8 @@ def project_valuation(
             capital_role=h.capital_role,
             macro_drivers=h.macro_drivers,
             corporate_group=h.corporate_group,
+            asset_class=h.asset_class,
+            economic_currency=h.economic_currency,
         ))
 
     # Build a lookup of per-ticker overrides from trade dicts
@@ -241,7 +247,8 @@ def project_valuation(
                 row = conn.execute("""
                     SELECT i.ticker, i.name, i.instrument_type, i.exchange,
                            i.currency, i.country_domicile,
-                           ic.capital_role, ic.macro_drivers, ic.corporate_group
+                           ic.capital_role, ic.macro_drivers, ic.corporate_group,
+                           ic.asset_class, ic.economic_currency
                     FROM instruments i
                     LEFT JOIN instrument_classifications ic ON ic.instrument_id = i.id
                     WHERE i.ticker = ?
@@ -278,6 +285,8 @@ def project_valuation(
                         capital_role=overrides.get("capital_role", row["capital_role"]),
                         macro_drivers=row["macro_drivers"],
                         corporate_group=overrides.get("corporate_group", row["corporate_group"]),
+                        asset_class=overrides.get("asset_class", row["asset_class"]),
+                        economic_currency=overrides.get("economic_currency", row["economic_currency"]),
                     ))
                 else:
                     logger.warning(
@@ -296,6 +305,8 @@ def project_valuation(
                         capital_role=overrides.get("capital_role"),
                         macro_drivers=overrides.get("macro_drivers"),
                         corporate_group=overrides.get("corporate_group"),
+                        asset_class=overrides.get("asset_class"),
+                        economic_currency=overrides.get("economic_currency", currency),
                     ))
 
     # Adjust investable cash by net trade flow (sells add, buys consume)
@@ -343,7 +354,8 @@ def compute_valuation(db_path=None) -> PortfolioValuation:
                 inst.name AS institution_name,
                 h.quantity,
                 p.close_price, p.date AS price_date,
-                ic.capital_role, ic.macro_drivers, ic.corporate_group
+                ic.capital_role, ic.macro_drivers, ic.corporate_group,
+                ic.asset_class, ic.economic_currency
             FROM holdings h
             JOIN instruments i ON i.id = h.instrument_id
             JOIN accounts a ON a.id = h.account_id
@@ -382,6 +394,8 @@ def compute_valuation(db_path=None) -> PortfolioValuation:
                 capital_role=r["capital_role"],
                 macro_drivers=r["macro_drivers"],
                 corporate_group=r["corporate_group"],
+                asset_class=r["asset_class"],
+                economic_currency=r["economic_currency"],
             ))
 
         # Cash balances
