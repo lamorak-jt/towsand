@@ -94,7 +94,6 @@ def _assess_income_bridge(
     # But stabiliser *instruments* can lose value (e.g., bond price decline in rate shock).
     # Compute: what % decline in stabiliser assets breaks the 24-month floor?
     stab_holdings = sum(h.value_aud for h in pv.holdings if h.capital_role == "stabiliser")
-    stab_cash = sum(c.value_aud for c in pv.cash if c.is_investable)
     min_stab = 24 * monthly
 
     if stabiliser <= 0:

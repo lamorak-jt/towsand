@@ -736,7 +736,7 @@ def stress_cmd(scenario, detail, trades_file):
             )
 
             if detail:
-                click.echo(f"\n  Per-holding drawdowns:")
+                click.echo("\n  Per-holding drawdowns:")
                 click.echo(f"  {'Ticker':<14s}  {'Role':<12s}  {'Pre':>12s}  {'DD':>8s}  {'Post':>12s}  {'Source':<10s}")
                 click.echo(f"  {'-'*74}")
                 for hs in sorted(r.holding_stresses, key=lambda x: x.drawdown_pct):

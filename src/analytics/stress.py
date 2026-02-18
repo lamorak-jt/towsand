@@ -17,7 +17,6 @@ Strategy reference: current-finances/strategy-assumptions.md
 
 import logging
 from dataclasses import dataclass, field
-from datetime import date
 
 from src.db.connection import get_connection
 from src.portfolio.valuation import PortfolioValuation, HoldingValue
