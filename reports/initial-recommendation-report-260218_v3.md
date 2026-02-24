@@ -97,12 +97,14 @@ Given these constraints, the three roles sum to 100% with no remaining slack.
 
 ### Rec 3: Swap Nominal Stabiliser for Inflation-Linked
 
-- **Type**: Sell AGVT.AX (full, ~AUD 95,000) + Trim JPST (~AUD 22,000) → Buy Treasury Indexed Bonds (~AUD 114,000)
+- **Type**: Sell AGVT.AX (full, ~AUD 95,000) + Trim JPST (~AUD 22,000) → Buy GSBI30 + GSBI32 (~AUD 114,000)
 - **Role**: Stabiliser internal rebalance — no role change
 - **Rules addressed**: [7.3] inflation coverage (0% → ~25.6%)
-- **Instrument**: ASX-listed Treasury Indexed Bonds (GSBI series), maturities 2027–2033 to match stabiliser horizon. If direct TIBs are illiquid, an inflation-linked government bond ETF is an alternative.
+- **Instruments**: GSBI30 (~$57k, maturity 2030, ~4y duration) + GSBI32 (~$57k, maturity 2032, ~6y duration).
+- **Why GSBI30 + GSBI32**: Skip GSBI28 — matures barely 10 months after GSBG27 when excess cash is already incoming. Skip GSBI34 — 8 years is long for a stabiliser asset and adds mark-to-market risk if the position needs to be sold during the post-GSBG27 restructure. GSBI30 + GSBI32 span 4–6 years, providing sustained inflation protection through the medium-term stabiliser horizon. After GSBG27 matures (Apr 2027), these become the inflation anchor of a leaner stabiliser.
 - **Why sell AGVT.AX**: Nominal government bonds — no inflation protection. Same credit quality as GSBI (both AU Government). Overlaps GSBG27/GSBG33.
 - **Why trim JPST**: Reduces USD currency mismatch within stabiliser. Post-trim JPST remains ~AUD 100,000 (still provides USD liquidity).
+- **Rule 7.2 check**: GSBI30 enters the "4y" bucket ($57k = 12.8% of stabiliser), GSBI32 enters the "6y" bucket ($57k = 12.8%). Both well under 40%.
 - **Constraint check**: AU Government group rises from 17.3% to 18.4% — under 20% cap (1.6pp buffer).
 
 ### Rec 4: Buy VAS.AX (Vanguard Australian Shares Index ETF)
@@ -189,8 +191,9 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | Instrument | AUD | % Portfolio | Notes |
 |------------|----:|-------------|-------|
 | GSBG27.AX | 178,120 | 10.0% | Govt bond, matures Apr 2027 |
-| GSBI (new) | 114,000 | 6.4% | Inflation-linked govt bond |
 | JPST (trimmed) | 100,000 | 5.6% | USD ultra-short ETF |
+| GSBI30 (new) | 57,000 | 3.2% | Inflation-linked govt bond, matures 2030 |
+| GSBI32 (new) | 57,000 | 3.2% | Inflation-linked govt bond, matures 2032 |
 | GSBG33.AX | 35,448 | 2.0% | Govt bond, matures Apr 2033 |
 | Cash | 17,876 | 1.0% | Multi-currency |
 | **Stabiliser total** | **445,444** | **25.0%** | |
@@ -260,8 +263,8 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | [5.2] Hedging | ✓ | 100% international growth unhedged (≥40%) |
 | [6.1] Convexity | ✓ | PMGOLD 2/3, GHY 2/3. |
 | [7.1] Stabiliser liquidity | ✓ | 100% liquid ≤5 days |
-| [7.2] Stabiliser duration | ✓ | **GSBG27 = 40.0%** of stabiliser (≤40%). Pinned — see Design Constraints. |
-| [7.3] Inflation coverage | ✓ | GSBI ~114,000 / 445,444 = 25.6% (≥25%) |
+| [7.2] Stabiliser duration | ✓ | **GSBG27 = 40.0%** of stabiliser in "1y" bucket (≤40%). GSBI30 = 12.8% in "4y", GSBI32 = 12.8% in "6y". Pinned — see Design Constraints. |
+| [7.3] Inflation coverage | ✓ | GSBI30 + GSBI32 = 114,000 / 445,444 = 25.6% (≥25%) |
 | [8.1] Drawdown tolerance | ✓ | After 35% equity drawdown, stabiliser 445,444 still covers 24 months (216,000) |
 | [8.2] Stress correlation | ⚠ Monitor | Credit spread group: CRED+FLBL+TCPC = 286k = 16.1%. AU equity beta: BHP+SOL+AGL+ORG+VAS = ~576k = 32.3% — largest stress-correlated cluster. Precious metals: PMGOLD = 171k = 9.6%. Emerging equity: VGE = 83k = 4.7%. |
 | [9.2] No action rule | ✓ | Breaches justify action; no discretionary triggers needed |
@@ -303,13 +306,14 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | 2 | Trim | FLBL | Sell | 123,203 | USD | US (IB) |
 | 3 | Trim | CRED.AX | Sell | 11,046 | AUD | ASX (IB) |
 | 4 | Trim | JPST | Sell | 22,138 | USD | US (IB) |
-| 5 | New buy | GSBI (TIBs) | Buy | 114,000 | AUD | ASX |
-| 6 | New buy | VAS.AX | Buy | 169,268 | AUD | ASX (IB) |
-| 7 | New buy | VGS.AX | Buy | 160,360 | AUD | ASX (IB) |
-| 8 | Top up | SOL.AX | Buy | 77,917 | AUD | ASX (IB) |
-| 9 | New buy | VGE.AX | Buy | 83,453 | AUD | ASX (IB) |
-| 10 | New buy | PMGOLD.AX | Buy | 170,892 | AUD | ASX (IB) |
-| 11 | DB fix | GHY.AX | Classify | 0 | — | — |
+| 5 | New buy | GSBI30 | Buy | 57,000 | AUD | ASX |
+| 6 | New buy | GSBI32 | Buy | 57,000 | AUD | ASX |
+| 7 | New buy | VAS.AX | Buy | 169,268 | AUD | ASX (IB) |
+| 8 | New buy | VGS.AX | Buy | 160,360 | AUD | ASX (IB) |
+| 9 | Top up | SOL.AX | Buy | 77,917 | AUD | ASX (IB) |
+| 10 | New buy | VGE.AX | Buy | 83,453 | AUD | ASX (IB) |
+| 11 | New buy | PMGOLD.AX | Buy | 170,892 | AUD | ASX (IB) |
+| 12 | DB fix | GHY.AX | Classify | 0 | — | — |
 
 **Sell proceeds**: ~AUD 252,000
 **Buy total**: ~AUD 776,000
@@ -331,7 +335,7 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 - VAS.AX, VGS.AX (large, liquid ASX ETFs — high daily volume)
 - SOL.AX top-up (liquid ASX equity)
 - PMGOLD.AX (liquid ASX ETF)
-- GSBI (direct bonds — check ASX order book, patient limit orders; OR buy via CommSec alongside existing govt bonds)
+- GSBI30, GSBI32 (direct bonds — check ASX order book, patient limit orders; OR buy via CommSec alongside existing govt bonds)
 
 **Day 7–10 — Smaller buys:**
 - VGE.AX (smaller position, adequate liquidity)
@@ -388,12 +392,20 @@ towsand classify tag PMGOLD.AX \
   --duration 0 --liquidity 1 --no-inflation-linked --unhedged
 
 # New stabiliser (inflation-linked)
-towsand classify role GSBI stabiliser
-towsand classify tag GSBI \
+towsand classify role GSBI30 stabiliser
+towsand classify role GSBI32 stabiliser
+
+towsand classify tag GSBI30 \
   --macro "au_interest_rates" \
   --group "AU Government" \
   --corr-group "au_govt_bond" \
-  --duration 5.0 --liquidity 2 --inflation-linked
+  --duration 4.0 --liquidity 2 --inflation-linked
+
+towsand classify tag GSBI32 \
+  --macro "au_interest_rates" \
+  --group "AU Government" \
+  --corr-group "au_govt_bond" \
+  --duration 6.0 --liquidity 2 --inflation-linked
 
 # GHY.AX convexity fix
 # Set nonlinear_upside=true (criterion 2)
@@ -422,7 +434,11 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'PMGOLD.AX');
 
 UPDATE instrument_classifications SET
   asset_class = 'govt_bond_indexed', economic_currency = 'AUD'
-WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI');
+WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI30');
+
+UPDATE instrument_classifications SET
+  asset_class = 'govt_bond_indexed', economic_currency = 'AUD'
+WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI32');
 ```
 
 **Implementation note**: The `classify tag` CLI should be extended to support `--asset-class` and `--economic-currency` flags. Without these fields set, compliance falls back to `instrument_type` (wrong caps for commodity ETPs) and `currency` (wrong AUD/non-AUD classification for PMGOLD). This is a code improvement item.
@@ -449,7 +465,7 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI');
 | Classification commands | Missing asset_class, economic_currency | **Included** (SQL statements) |
 | Design constraints | Not explained | **Explicit** — GSBG27 pins stabiliser, S+C+O must sum to 100% |
 | VGE size | 3.0% ($53k) | **4.7%** ($83k) — absorbed ETPMAG's $30k |
-| Trade count | 12 (11 trades + 1 DB fix) | **11** (10 trades + 1 DB fix) |
+| Trade count | 12 (11 trades + 1 DB fix) | **12** (11 trades + 1 DB fix) |
 
 ---
 
@@ -570,7 +586,7 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI');
    - Consider splitting commodity proxy into gold/precious vs industrial/base for future accuracy
    - Add post-trade compliance projection capability (`towsand compliance --trades`)
 
-4. **GSBI selection:** Verify current ASX-listed Treasury Indexed Bond availability. Target maturities 2027–2033 matching stabiliser horizon.
+4. **GSBI execution:** GSBI30 and GSBI32 are ASX-listed Treasury Indexed Bonds. Check order book depth before placing — TIBs trade less frequently than nominal govts. Patient limit orders recommended. CommSec may offer better access than IB for direct govt bonds.
 
 ---
 
