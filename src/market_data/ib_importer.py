@@ -142,10 +142,11 @@ def import_positions(report: ParsedFlexReport, db_path=None) -> dict:
         df = df[df["levelOfDetail"] == "SUMMARY"]
 
     today = date.today().isoformat()
-    stats = {"instruments": 0, "holdings": 0, "prices": 0, "skipped": 0}
+    stats = {"instruments": 0, "holdings": 0, "prices": 0, "skipped": 0, "closed": 0}
 
     with get_connection(db_path) as conn:
         account_id = _ensure_ib_account(conn)
+        imported_instrument_ids: set[int] = set()
 
         for _, row in df.iterrows():
             symbol = str(row.get("symbol", "")).strip()
@@ -174,6 +175,7 @@ def import_positions(report: ParsedFlexReport, db_path=None) -> dict:
                 conn, ticker, description, instrument_type, exchange, currency, country
             )
             stats["instruments"] += 1
+            imported_instrument_ids.add(instrument_id)
 
             _upsert_holding(
                 conn, account_id, instrument_id, quantity,
@@ -186,6 +188,18 @@ def import_positions(report: ParsedFlexReport, db_path=None) -> dict:
                 report_date = _normalize_date(str(row.get("reportDate", today)))
                 _upsert_price(conn, instrument_id, report_date, float(mark_price), currency)
                 stats["prices"] += 1
+
+        # Remove IB holdings no longer in the Flex report (fully closed positions)
+        if imported_instrument_ids:
+            placeholders = ",".join("?" * len(imported_instrument_ids))
+            closed = conn.execute(
+                f"DELETE FROM holdings WHERE account_id = ? "
+                f"AND instrument_id NOT IN ({placeholders})",
+                (account_id, *imported_instrument_ids),
+            )
+            stats["closed"] = closed.rowcount
+            if stats["closed"]:
+                logger.info("Removed %d closed IB holdings", stats["closed"])
 
     logger.info("Import positions complete: %s", stats)
     return stats

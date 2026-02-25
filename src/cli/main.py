@@ -1033,11 +1033,13 @@ def _print_import_results(results: dict) -> None:
     fx = results.get("fx", {})
 
     skipped = pos.get("skipped", 0)
+    closed = pos.get("closed", 0)
     skipped_msg = f", {skipped} skipped" if skipped else ""
+    closed_msg = f", {closed} closed positions removed" if closed else ""
     click.echo("Import complete:")
     click.echo(f"  Positions: {pos.get('holdings', 0)} holdings, "
                f"{pos.get('instruments', 0)} instruments, "
-               f"{pos.get('prices', 0)} prices{skipped_msg}")
+               f"{pos.get('prices', 0)} prices{skipped_msg}{closed_msg}")
     click.echo(f"  Cash:      {cash.get('balances', 0)} currency balances")
     click.echo(f"  FX rates:  {fx.get('rates', 0)} rates")
 

@@ -130,11 +130,11 @@ Given these constraints, the three roles sum to 100% with no remaining slack.
 ### Rec 6: Buy VGE.AX (Vanguard FTSE Emerging Markets Shares ETF)
 
 - **Type**: Buy (new position)
-- **Amount**: AUD 83,000
+- **Amount**: AUD 135,000 (includes TCPC proceeds — see Rec 10)
 - **Role**: Compounder
 - **Rules addressed**: [1.1-C]; [1.1-S]
-- **Position**: 4.7% — within 10% equity cap with 5.3pp buffer.
-- **Currency (Rule 5.1)**: Non-AUD.
+- **Position**: 7.6% — within 10% equity cap with 2.4pp buffer.
+- **Currency (Rule 5.1)**: Non-AUD. AUD growth unchanged — TCPC was also non-AUD, so the swap is neutral.
 - **Rationale**: Adds emerging market exposure (absent from portfolio). China ~30%, India ~20%, Taiwan ~17%. Tracks real businesses in economies with structural growth drivers (demographics, urbanisation, rising middle class) — a genuine compounder per Strategy §3. Macro drivers (china_demand, emerging_markets) are distinct from everything else in the portfolio.
 
 ### Rec 7: Top Up SOL.AX
@@ -165,7 +165,17 @@ Given these constraints, the three roles sum to 100% with no remaining slack.
 
 Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 draft as compounder ("real-asset growth bet"). Neither classification holds. Silver fails Rule 6.1 criterion 3 (falls 33–55% in acute crises), and the strategy defines compounders as "durable, high-ROIC businesses and diversified global equity exposure" — silver is none of those. At 1.7%, even excellent performance is immaterial to a $1.78M portfolio, but the position adds monitoring overhead and relies on a commodity proxy that the report's own limitations section identifies as dramatically wrong for silver. The $30k is redeployed to VGE (Rec 6), taking emerging markets from 3.0% to 4.7% — a genuine compounder with distinct macro drivers.
 
-### Rec 9: Set GHY.AX Convexity Flags
+### Rec 10: Sell TCPC (full)
+
+- **Type**: Sell (full position)
+- **Amount**: ~AUD 51,000 (USD ~36,000)
+- **Role**: Compounder → proceeds to VGE (Rec 6)
+- **Rules addressed**: Strategy §3 alignment; [8.2] stress correlation reduction
+- **Why sell**: TCPC is a BDC (leveraged lending vehicle). Strategy §3 defines compounders as "durable, high-ROIC businesses and diversified global equity exposure." TCPC is none of those — its return is credit spread income with capped upside and equity-like downside in crises (BDCs fell 60–80% in the GFC). Strategy §5 explicitly warns that "yield, carry, or spread compression alone does not qualify" for the portfolio's defined roles. TCPC doesn't fit stabiliser (no liquidity/drawdown protection), compounder (not a business or equity), or optionality (inverse convexity). It is an unclassifiable instrument under the strategy.
+- **Credit cluster impact**: FLBL + CRED + TCPC = 16.1% → FLBL + CRED = 13.0%. Removes the third credit spread instrument and meaningfully reduces the portfolio's largest non-equity risk factor.
+- **AUD growth impact**: Neutral. TCPC (non-AUD) → VGE (non-AUD). No change to Rule 5.1.
+
+### Rec 11: Set GHY.AX Convexity Flags
 
 - **Type**: Database update (no trade)
 - **Rules addressed**: [6.1] convexity test
@@ -208,9 +218,8 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | SOL.AX (topped up) | 152,216 | 8.5% | 10% eq | AU conglomerate |
 | FLBL (trimmed) | 115,815 | 6.5% | **7% cr** | US senior loans |
 | CRED.AX (trimmed) | 115,815 | 6.5% | **7% cr** | AU IG corporate bonds |
-| VGE.AX (new) | 83,453 | 4.7% | 10% eq | Emerging markets |
+| VGE.AX (new) | 134,982 | 7.6% | 10% eq | Emerging markets |
 | AGL.AX | 67,727 | 3.8% | 10% eq | AU energy utility |
-| TCPC | 54,405 | 3.1% | **7% cr** | US BDC / private credit |
 | UKW | 51,757 | 2.9% | 10% eq | UK wind infrastructure |
 | ORG.AX | 17,640 | 1.0% | 10% eq | AU energy |
 | **Compounder total** | **1,158,153** | **65.0%** | | |
@@ -254,7 +263,7 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | [2.1] Income Substitution | ✓ | 445,444 / 9,000 = 49.5 months (≥24) |
 | [2.2] Income Shock | ✓ | Not active |
 | [3.1] Equity caps | ✓ | Largest: VAS 9.5%, BHP 9.5%, VGS 9.0%, PMGOLD 9.6% — all ≤10% |
-| [3.1] Credit caps | ✓ | FLBL 6.5%, CRED 6.5%, TCPC 3.1% — all ≤7% |
+| [3.1] Credit caps | ✓ | FLBL 6.5%, CRED 6.5% — all ≤7%. TCPC sold (Rec 10). |
 | [3.1] Speculative caps | ✓ | GHY 0.4% (≤1% each, ≤3% agg) |
 | [3.2] Issuer concentration | ✓ | Largest: AU Government 18.4% (≤20%) |
 | [4.1] AU concentration | ✓ | AUD risk assets ~39% (≤55%) |
@@ -266,7 +275,7 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | [7.2] Stabiliser duration | ✓ | **GSBG27 = 40.0%** of stabiliser in "1y" bucket (≤40%). GSBI30 = 12.8% in "4y", GSBI32 = 12.8% in "6y". Pinned — see Design Constraints. |
 | [7.3] Inflation coverage | ✓ | GSBI30 + GSBI32 = 114,000 / 445,444 = 25.6% (≥25%) |
 | [8.1] Drawdown tolerance | ✓ | After 35% equity drawdown, stabiliser 445,444 still covers 24 months (216,000) |
-| [8.2] Stress correlation | ⚠ Monitor | Credit spread group: CRED+FLBL+TCPC = 286k = 16.1%. AU equity beta: BHP+SOL+AGL+ORG+VAS = ~576k = 32.3% — largest stress-correlated cluster. Precious metals: PMGOLD = 171k = 9.6%. Emerging equity: VGE = 83k = 4.7%. |
+| [8.2] Stress correlation | ⚠ Monitor | Credit spread group: CRED+FLBL = 232k = 13.0% (was 16.1% with TCPC). AU equity beta: BHP+SOL+AGL+ORG+VAS = ~576k = 32.3% — largest stress-correlated cluster. Precious metals: PMGOLD = 171k = 9.6%. Emerging equity: VGE = 135k = 7.6%. |
 | [9.2] No action rule | ✓ | Breaches justify action; no discretionary triggers needed |
 
 **Post-trade rule buffers (from `towsand sensitivity --trades`):**
@@ -306,14 +315,15 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | 2 | Trim | FLBL | Sell | 123,203 | USD | US (IB) |
 | 3 | Trim | CRED.AX | Sell | 11,046 | AUD | ASX (IB) |
 | 4 | Trim | JPST | Sell | 22,138 | USD | US (IB) |
-| 5 | New buy | GSBI30 | Buy | 57,000 | AUD | ASX |
-| 6 | New buy | GSBI32 | Buy | 57,000 | AUD | ASX |
-| 7 | New buy | VAS.AX | Buy | 169,268 | AUD | ASX (IB) |
-| 8 | New buy | VGS.AX | Buy | 160,360 | AUD | ASX (IB) |
-| 9 | Top up | SOL.AX | Buy | 77,917 | AUD | ASX (IB) |
-| 10 | New buy | VGE.AX | Buy | 83,453 | AUD | ASX (IB) |
-| 11 | New buy | PMGOLD.AX | Buy | 170,892 | AUD | ASX (IB) |
-| 12 | DB fix | GHY.AX | Classify | 0 | — | — |
+| 5 | Full sell | TCPC | Sell | 51,000 | USD | US (IB) |
+| 6 | New buy | GSBI30 | Buy | 57,000 | AUD | ASX |
+| 7 | New buy | GSBI32 | Buy | 57,000 | AUD | ASX |
+| 8 | New buy | VAS.AX | Buy | 169,268 | AUD | ASX (IB) |
+| 9 | New buy | VGS.AX | Buy | 160,360 | AUD | ASX (IB) |
+| 10 | Top up | SOL.AX | Buy | 77,917 | AUD | ASX (IB) |
+| 11 | New buy | VGE.AX | Buy | 134,982 | AUD | ASX (IB) |
+| 12 | New buy | PMGOLD.AX | Buy | 170,892 | AUD | ASX (IB) |
+| 13 | DB fix | GHY.AX | Classify | 0 | — | — |
 
 **Sell proceeds**: ~AUD 252,000
 **Buy total**: ~AUD 776,000
@@ -326,6 +336,7 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 2. Trim CRED.AX (~AUD 11k, ASX)
 3. Trim FLBL (~USD 87k, US market)
 4. Trim JPST (~USD 16k, US market)
+5. Sell TCPC (full, ~USD 36k, US market)
 
 **Day 2–3 — FX + Transfers:**
 - Convert ~USD 299k → AUD on IB (needed for ASX purchases)
@@ -352,6 +363,7 @@ Silver was in v2 as optionality (scored 2/3 on Rule 6.1) and in an earlier v3 dr
 | Trim FLBL | Yes | Partial disposal — CGT + potential FX gain/loss (USD). |
 | Trim JPST | Yes | Partial disposal — CGT + potential FX gain/loss (USD). |
 | Trim CRED.AX | Yes | Partial disposal — small amount. |
+| Sell TCPC | Yes | Full disposal — CGT + potential FX gain/loss (USD). |
 | All buys | No | |
 
 User should assess CGT impact before executing.
@@ -464,8 +476,10 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI32');
 | Optionality characterisation | "Optionality" | **"Regime insurance / crisis diversifier"** within Rule 0.1 constraints |
 | Classification commands | Missing asset_class, economic_currency | **Included** (SQL statements) |
 | Design constraints | Not explained | **Explicit** — GSBG27 pins stabiliser, S+C+O must sum to 100% |
-| VGE size | 3.0% ($53k) | **4.7%** ($83k) — absorbed ETPMAG's $30k |
-| Trade count | 12 (11 trades + 1 DB fix) | **12** (11 trades + 1 DB fix) |
+| TCPC | Held at 3.1% (compounder) | **Sold** — doesn't fit any role per Strategy §3/§5. Proceeds to VGE. |
+| VGE size | 3.0% ($53k) | **7.6%** ($135k) — absorbed ETPMAG $30k + TCPC $51k |
+| Credit cluster | 23.6% (pre-trade) | **13.0%** (was 16.1% before TCPC removal) |
+| Trade count | 12 (11 trades + 1 DB fix) | **13** (12 trades + 1 DB fix) |
 
 ---
 
@@ -489,8 +503,8 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI32');
 |-----------|----------|---------|
 | **Income Bridge** | SAFE | Post-trade stabiliser AUD 445,444 = 49 months. 25 months excess over the 24-month floor. A 54% decline in stabiliser holdings needed to break it. |
 | **Forced Liquidation** | WATCH | Stabiliser excess AUD 229,444 (12.9%). Adequate but no longer fortress-like. |
-| **Compounding Capital** | SAFE | Compounder rises to AUD 1,158,153 (65.0%). A 35% drawdown costs AUD 405,353 — more dollars at risk, but from a stronger base. Recovery: 6.8 years. |
-| **AUD Liability Matching** | WATCH | AUD growth at 52.4%. A 9.9% rally in non-AUD growth weakens below 50%. Improved from v2's 50.4% (1.7% trigger). |
+| **Compounding Capital** | SAFE | Compounder rises to AUD ~1,157k (65.0%). A 35% drawdown costs AUD ~358k — more dollars at risk, but from a stronger base. Recovery: 6.8 years. |
+| **AUD Liability Matching** | SAFE | AUD growth at 58.6%. A 41% rally in non-AUD growth needed to breach 50%. Improved from v2's 50.4%. TCPC removal (non-AUD credit) contributed. |
 | **Optionality as Crisis Insurance** | FRAGILE | At 10.0% (AUD 178,177). Gold-only at scale — regime insurance, not convex payoff. Performs its designed function in proxy stress scenarios. |
 
 ---
@@ -499,24 +513,24 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI32');
 
 *Generated by `towsand stress --trades data/trades-v3.json --detail`.*
 
-**Data source transparency:** COVID-2020 and GFC-2008 scenarios use **asset-class proxy drawdowns for all holdings** (no actual price data for those periods). The 2022 Rate Shock uses actual historical drawdowns for 11 of 17 post-trade holdings.
+**Data source transparency:** COVID-2020 and GFC-2008 scenarios use **asset-class proxy drawdowns for all holdings** (no actual price data for those periods). The 2022 Rate Shock uses actual historical drawdowns for 10 of 16 post-trade holdings.
 
 ### Pre-Trade vs Post-Trade Comparison
 
 | Scenario | | Wealth Lost | Comp. Destroyed | Recovery | Forced Sell? |
 |----------|-|----------:|----------------:|---------:|-------------|
 | **Flat 35% Haircut** | Pre | AUD 283,042 | AUD 280,492 | 6.8 yrs | No |
-| | **Post** | **AUD 467,716** | **AUD 405,353** | **6.8 yrs** | **No** |
-| | Delta | +184,674 | +124,862 | 0.0 | |
+| | **Post** | **AUD 419,889** | **AUD 357,605** | **6.8 yrs** | **No** |
+| | Delta | +114,295 | +54,632 | 0.0 | |
 | **COVID-19 2020** ⚠ | Pre | AUD 188,849 | AUD 191,259 | 4.3 yrs | No |
-| | **Post** | **AUD 359,338** | **AUD 342,971** | **5.6 yrs** | **No** |
-| | Delta | +170,489 | +151,712 | +1.3 | |
+| | **Post** | **AUD 349,815** | **AUD 306,420** | **5.7 yrs** | **No** |
+| | Delta | +122,719 | +89,257 | +1.3 | |
 | **GFC 2008** ⚠ | Pre | AUD 301,041 | AUD 327,938 | 8.4 yrs | No |
-| | **Post** | **AUD 526,117** | **AUD 557,712** | **10.4 yrs** | **No** |
-| | Delta | +225,076 | +229,774 | +2.0 | |
+| | **Post** | **AUD 492,234** | **AUD 496,698** | **10.6 yrs** | **No** |
+| | Delta | +131,546 | +129,132 | +2.0 | |
 | **2022 Rate Shock** | Pre | AUD 38,000 | gained 7,343 | 0 yrs | No |
-| | **Post** | **AUD 126,776** | **AUD 93,814** | **1.3 yrs** | **No** |
-| | Delta | +88,776 | +101,157 | +1.3 | |
+| | **Post** | **AUD 125,702** | **AUD 65,671** | **1.1 yrs** | **No** |
+| | Delta | +90,225 | +70,704 | +1.3 | |
 
 *⚠ = all-proxy scenario. Treat as indicative.*
 
@@ -526,21 +540,21 @@ WHERE instrument_id = (SELECT id FROM instruments WHERE ticker = 'GSBI32');
 
 **2. INCOME BRIDGE: Intact but thinner.** Worst case post-trade (2022 rate shock): 45 months. 21 months above the 24-month floor.
 
-**3. COMPOUNDING: More capital at risk, by design.** Post-trade GFC (proxy) destroys AUD 558k vs pre-trade AUD 328k. But the post-trade has AUD 1,158k compounding vs pre-trade AUD 801k. Percentage loss is similar (~48% vs ~41%).
+**3. COMPOUNDING: More capital at risk, by design.** Post-trade GFC (proxy) destroys AUD 497k vs pre-trade AUD 368k. But the post-trade has AUD 1,157k compounding vs pre-trade AUD 866k. Percentage loss is similar (~49% vs ~42%).
 
 **4. OPTIONALITY PERFORMANCE:**
 - COVID proxy: optionality lost 11% (PMGOLD at -10% commodity proxy) vs compounders' 30%. **Performed** — crisis insurance function activated.
-- GFC proxy: optionality **gained** 3% (PMGOLD at +5% commodity proxy) vs compounders' 48% loss. **Performed**.
-- 2022 Rate Shock: optionality **gained** 4% vs compounders' 8% loss. **Performed**.
+- GFC proxy: optionality **gained** 2% (PMGOLD at +5% commodity proxy) vs compounders' 49% loss. **Performed**.
+- 2022 Rate Shock: optionality **gained** 4% vs compounders' 6% loss. **Performed**.
 - Flat 35%: optionality lost 35% (synthetic uniform hit). Did not perform — by design, this synthetic worst-case hits everything equally.
 
-**5. 2022 RATE SHOCK remains the most informative scenario** (mostly historical data). Post-trade loss: AUD 127k. Optionality gained 4%.
+**5. 2022 RATE SHOCK remains the most informative scenario** (mostly historical data). Post-trade loss: AUD 126k. Optionality gained 4%.
 
 ---
 
 ## Appendix C: Diversification Quality
 
-*Generated by `towsand correlations --detail`. Analysis uses current holdings only (5 years of daily prices, 55 stress trading days). New instruments (VAS, VGS, VGE, PMGOLD) have no price history in the database — post-trade diversification is not empirically validated.*
+*Generated by `towsand correlations --detail`. Analysis uses current holdings only (5 years of daily prices, 55 stress trading days). New instruments (VAS, VGS, VGE, PMGOLD) have no price history in the database. TCPC is sold. Post-trade diversification is not empirically validated.*
 
 ### Does Each Role Do Its Job?
 
