@@ -409,7 +409,7 @@ def compute_valuation(db_path=None) -> PortfolioValuation:
         else:
             # Default: exclude credit-type accounts
             exclude_ids = set()
-            for row in conn.execute("SELECT id FROM accounts WHERE account_type = 'credit'"):
+            for row in conn.execute("SELECT id FROM accounts WHERE account_type IN ('credit', 'liability')"):
                 exclude_ids.add(row["id"])
 
         cash_rows = conn.execute("""

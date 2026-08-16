@@ -1,168 +1,304 @@
 # Strategy & Assumptions
 
-## 1. Balance Sheet First (Housing & Liquidity)
+## 1. Objectives and Capital Hierarchy
 
-### Strategy
+The strategy seeks to maximise after-tax, risk-adjusted returns while preserving the family's ability to:
 
-- Primary residence in Australia is purchased outright.
-- No non-deductible leverage is carried at any point.
-- Housing equity is treated as illiquid and excluded from portfolio risk budgeting.
-- Maintain 6–9 months of AUD liquidity during property transition and thereafter.
+1. Purchase an Australian primary residence without borrowing.
+2. Meet household expenses while employment income is below expenditure.
+3. Compound capital not required for either of those purposes over the long term.
 
-### Why
+Capital is assigned in this order:
 
-- Eliminates interest rate and refinancing risk.
-- Preserves psychological and financial flexibility during market stress.
-- Prevents forced asset sales due to timing or FX mismatches.
+1. **Property Capital**
+2. **Operating Capital**
+3. **Long-Term Capital**
 
----
-
-## 2. Employment Income as a Finite Stabiliser
-
-### Strategy
-
-- Ongoing employment income (~AUD 11k net per month) is assumed to fund all living expenses through 2027.
-- Income is treated as a temporary stabilising asset with:
-  - Finite duration
-  - Employer-specific risk
-- Portfolio construction assumes no portfolio withdrawals before 2027.
-
-### Kill-Switch
-
-If income visibility drops below 6 months or falls by >30%, capital preservation becomes the priority.
-
-### Why
-
-- Makes reliance on income explicit rather than implicit.
-- Aligns portfolio risk with actual cashflow dependency.
-- Prevents hidden leverage through income assumptions.
+Capital assigned to one function is not counted toward another function's requirement.
 
 ---
 
-## 3. Capital Segmentation by Function
+## 2. Property Capital
+
+### Requirement
+
+- Target complete cash requirement: **AUD 2,200,000**.
+- Purchase currency: **AUD**.
+- Borrowing is not permitted.
+- The full amount may be required effectively at once.
+
+### Timing
+
+- The capital cannot be required before **August 2027**.
+- August 2027 begins an uncertain purchase window extending approximately three years, through **August 2030**.
+- Purchase probability increases through that window, but an active property search is a stronger signal than the calendar alone.
+- Once a purchase becomes likely, the capital must be capable of becoming settlement-ready within the expected transaction timetable.
 
 ### Strategy
 
-Capital is segmented by role, not asset class:
+Property Capital is a low-risk AUD investment portfolio, not a cash-only reserve. It may include:
+
+- At-call deposits
+- Term deposits
+- Commonwealth government securities
+- State government and other high-grade AUD fixed-income securities
+- Diversified short-duration investment-grade credit
+- A limited allocation to intermediate duration and inflation-linked securities
+
+The portfolio is optimised for the best low-risk **after-tax** return subject to:
+
+- AUD liability matching
+- Capital preservation across the likely purchase window
+- Increasing liquidity as purchase probability rises
+- Controlled duration and credit-spread exposure
+- Counterparty and institution diversification
+
+Unhedged foreign-currency assets, equities, speculative assets, and materially credit-sensitive instruments are not counted as core Property Capital.
+
+### Model Allocation
+
+The starting mandate for AUD 2.2 million is:
+
+| Sleeve | AUD | Allocation | Purpose |
+|---|---:|---:|---|
+| At-call FCS-covered deposits | 200,000 | 9% | Monthly liquidity and operational flexibility |
+| Term deposits maturing before or around August 2027 | 400,000 | 18% | Use the period with no property liquidity requirement |
+| Short Commonwealth government ladder | 600,000 | 27% | Sovereign quality, maturity certainty, and liquidity |
+| Semi-government and comparable AAA-quality AUD ladder | 400,000 | 18% | Additional yield over Commonwealth securities at high credit quality |
+| Short-duration investment-grade AUD credit | 300,000 | 14% | Controlled credit-spread income |
+| Intermediate Commonwealth government bonds | 200,000 | 9% | Term premium, roll-down, and limited rate exposure |
+| Inflation-linked government securities | 100,000 | 5% | Protection against loss of real purchasing power |
+| **Total** | **2,200,000** | **100%** | |
+
+This is a portfolio-construction mandate, not a requirement to buy each sleeve regardless of value. Allocation moves toward the eligible instruments offering the best after-tax yield after accounting for fees, duration, credit stress, liquidity, and maturity.
+
+Existing holdings may satisfy the mandate where appropriate:
+
+- `GSBG27.AX` forms part of the short Commonwealth ladder.
+- `GSBG33.AX` forms part of the limited intermediate-duration sleeve.
+- `CRED.AX` may form part of the investment-grade credit sleeve.
+- Unhedged foreign fixed income does not satisfy the AUD requirement and is replaced or assigned to Long-Term Capital.
+
+### Return Thesis
+
+Property Capital earns return from compensated, bounded sources:
+
+- Deposit and cash rates
+- Term premium during the period with no liquidity requirement
+- Commonwealth bond coupons and yield-curve roll-down
+- Semi-government spread over Commonwealth securities
+- A limited investment-grade credit premium
+- Modest intermediate-duration exposure
+- Inflation protection
+
+The strategy does not seek additional return through equity beta, incidental foreign currency, leveraged credit, concentrated issuers, or illiquidity. Those risks belong, if used, in Long-Term Capital.
+
+### Income Objective
+
+The current annual household income deficit is:
+
+**AUD 5,883 × 12 = AUD 70,596**
+
+For Property Capital alone to cover this deficit after tax requires an after-tax cash return of:
+
+**AUD 70,596 ÷ AUD 2,200,000 = 3.21%**
+
+Depending on the effective tax rate on investment income, this implies an indicative gross yield requirement of approximately 4.0–4.8%. This is a planning hurdle, not permission to exceed the Property Capital risk budget. If the eligible low-risk market does not offer the hurdle, the shortfall is met through the household income waterfall and Operating Capital rather than by adding inappropriate risk.
+
+### Currency Principle
+
+Property Capital has **100% AUD economic exposure**. Foreign-currency proceeds that do not match a known foreign-currency liability are converted to AUD rather than retained as an incidental currency position.
+
+### Glide Path
+
+| Stage | Near-cash or ≤1-year | Short/intermediate government | Credit/other |
+|---|---:|---:|---:|
+| Before August 2027 | 25–35% | 50–60% | 10–15% |
+| August 2027–August 2028 | 30–40% | 50–60% | 10–15% |
+| August 2028–August 2029 | 40–55% | 35–50% | 5–10% |
+| August 2029–August 2030 | 60–75% | 20–35% | 0–5% |
+| Purchase imminent | 80–100% | 0–20% | 0% |
+
+These are planning ranges, not mandatory calendar trades. Search activity overrides the calendar:
+
+- **No active search:** retain moderate government-bond duration and limited high-grade credit exposure.
+- **Purchase plausible within 12 months:** stop adding duration, reduce credit exposure, and direct maturities and income toward near-cash assets.
+- **Active inspections or buyer engagement:** hold at least 50–70% settlement-ready; restrict the remainder to highly liquid, short government securities.
+- **Preparing to make offers:** make the full purchase requirement settlement-ready.
+
+### Risk Principle
+
+Liquidity and price stability are assessed separately. A marketable government bond may be more liquid than a term deposit while carrying more mark-to-market risk.
+
+Duration and credit risk are budgeted rather than eliminated. Reserve adequacy is evaluated using current value, maturity proceeds, liquidity, and stressed realisable value—not by treating every low-risk asset as equivalent to cash.
+
+### Purchase-Cost Review
+
+The AUD 2.2 million requirement is reviewed against the relevant property market:
+
+- Every six months from August 2027
+- When the intended location or property type becomes more specific
+- When active searching begins
+- When evidence indicates a material change in complete purchase cost
+
+---
+
+## 3. Operating Capital
+
+### Current Assumptions
+
+- Core household expenditure: **AUD 11,383 per month**.
+- Secure household net employment income: **AUD 5,500 per month**.
+- Other employment income: **AUD 0** unless and until contractually visible.
+- Current monthly income deficit: **AUD 5,883**.
+
+### Requirement
+
+Operating Capital must cover at least **18 months of the current income deficit**:
+
+**AUD 5,883 × 18 = AUD 105,894**
+
+The requirement is recalculated when secure income or core expenditure changes materially.
+
+### Strategy
+
+Operating Capital is held in AUD instruments that are accessible without depending on favourable market conditions. Its purpose is to fund the household and prevent forced sales from Property Capital or Long-Term Capital.
+
+Household expenditure is funded in this order:
+
+1. Secure employment income
+2. Reliable interest and coupons from Property Capital
+3. Dividends and distributions from Long-Term Capital
+4. Operating Capital for the residual deficit
+
+Property Capital income not required by this waterfall is reinvested into Property Capital. Long-Term distributions are not assumed to be stable: in particular, equity dividends are supplementary income rather than contractual cash flow.
+
+Future startup income is treated as upside until its amount and duration are contractually visible.
+
+### Income Shock Trigger
+
+Capital preservation becomes the priority if:
+
+- Secure household income falls materially
+- Forward visibility of secure income falls below six months
+- Core expenditure rises materially
+- The operating reserve falls below 12 months of the current income deficit
+
+---
+
+## 4. Long-Term Capital
+
+Long-Term Capital is the residual after fully assigning Property Capital and Operating Capital.
+
+Using the current net financial position:
+
+| Item | AUD |
+|---|---:|
+| Net financial position | 3,428,406 |
+| Property Capital | (2,200,000) |
+| Operating Capital | (105,894) |
+| **Indicative Long-Term Capital** | **1,122,512** |
+
+These values are planning figures. Portfolio valuation, transaction costs, and market movements change the residual over time.
+
+### Purpose
+
+- Maximise absolute real returns over 20+ years
+- Preserve purchasing power across economic regimes
+- Avoid forced liquidation caused by household or property requirements
+
+### Capital Roles
+
+Long-Term Capital is segmented by function:
 
 **Stabiliser Capital**
 
-- **Purpose:** liquidity, inflation protection, and drawdown control.
-- **Horizon:** 2027–2033.
-- **Instruments:** AUD government bonds (nominal and indexed), laddered.
+- Is optional and limited because Property and Operating Capital already make most of the family balance sheet defensive.
+- Supports drawdown control only where an additional Long-Term defensive allocation improves the combined balance sheet.
+- Is separate from Property Capital and Operating Capital.
 
 **Compounder Capital**
 
-- **Purpose:** maximise absolute real returns over 20+ years.
-- **Focus:** total return via durable, high-ROIC businesses and diversified global equity exposure.
-- **Expected real return:** 6–7% p.a. over the cycle.
+- Provides the primary long-term growth engine.
+- Focuses on diversified global equity exposure and durable, high-return businesses.
+- May include intentional income-oriented equity holdings where their total-return thesis remains sound.
+- Is evaluated on long-term total return rather than current yield; dividends do not make an equity a capital-preservation asset.
 
 **Optionality Capital**
 
-- **Purpose:** exploit regime change or dislocation over 12–18 months.
-- Strictly limited downside with asymmetric upside.
-
-### Why
-
-- Prevents role confusion (e.g. yield assets masquerading as optionality).
-- Allows different risk tolerances and evaluation metrics per bucket.
+- Provides limited, asymmetric exposure to dislocation or regime change.
+- Must have explicitly bounded portfolio downside.
+- Is not required to reach a minimum allocation when suitable opportunities are absent.
 
 ---
 
-## 4. Return Expectations & Risk Budget
+## 5. Return Expectations and Risk Capacity
 
-### Strategy
+- Return objectives are assessed after inflation, tax, fees, and transaction costs.
+- Property Capital is optimised for low-risk after-tax return, not maximum return.
+- Long-Term Capital carries the majority of equity and other growth risk.
+- Concentration is permitted only where downside does not impair the property, operating, or long-term plan.
+- No single position, issuer, currency, or macro factor may dominate family outcomes.
 
-- Portfolio is designed around real (after-inflation) returns, not nominal targets.
-- Concentration is permitted only where:
-  - Capital allocation skill is demonstrable, and
-  - Downside does not impair overall plan viability.
-- No single position or macro factor is allowed to dominate total outcomes.
-
-### Why
-
-- Avoids overstated return assumptions.
-- Ensures survivability across multiple macro regimes.
-- Keeps conviction from becoming unpriced risk.
+The ability to tolerate market volatility does not by itself create capacity to risk capital assigned to a non-negotiable liability.
 
 ---
 
-## 5. Definition of True Optionality
+## 6. Currency Exposure
 
-### Strategy
-
-Optionality capital must exhibit at least two of the following:
-
-- Convex payoff (limited downside, large upside)
-- Positive exposure to volatility or dislocation
-- Low correlation to equity beta in stress
-
-Instruments are classified as Optionality if their expected payoff is meaningfully convex (i.e., upside increases disproportionately in dislocation), even if they have incidental carry.
-
-Yield, carry, or spread compression alone does not qualify as optionality.
-
-### Why
-
-- Prevents slow capital erosion with poor crisis performance.
-- Ensures optionality pays off when the base case fails.
-- Aligns instruments with the stated time-arbitrage objective.
-
----
-
-## 6. Currency Exposure Philosophy
-
-### Strategy
-
-- AUD-denominated assets are used for:
-  - Liability matching
-  - Near-term spending needs
-- A portion of long-term growth capital is held unhedged internationally.
+- Property and Operating Capital use AUD economic exposure because their liabilities are in AUD.
+- Long-Term Capital may retain meaningful unhedged international exposure.
+- Foreign listing currency and economic exposure are assessed separately.
 
 ### Principle
 
-- **Hedged exposure** = cashflow and volatility management
-- **Unhedged exposure** = regime insurance and real purchasing power protection
+- **AUD exposure:** liability matching and near-term spending capacity
+- **Hedged international exposure:** volatility and cash-flow management
+- **Unhedged international exposure:** long-term diversification and protection against Australia-specific weakness
 
-### Why
-
-- Protects against Australia-specific downturns and AUD weakness.
-- Reduces dependence on correct macro and policy forecasting.
-- Improves real return stability over long horizons.
+Incidental foreign cash balances are not strategic currency allocations.
 
 ---
 
-## 7. Stress & Correlation Awareness
+## 7. Instrument Universe
 
-### Strategy
+The portfolio is restricted to:
 
-The portfolio must remain functional under scenarios such as:
+- Long-only positions
+- Non-leveraged instruments
+- Non-derivative instruments
+- Publicly listed or deposit-based instruments
 
-- Global equity drawdown
-- Commodity cycle reversal
+No margin, short selling, futures, options, warrants, leveraged ETFs, structured products, private funds, or illiquid alternatives are used.
+
+---
+
+## 8. Stress and Correlation Awareness
+
+The family balance sheet must remain functional under:
+
+- Interest-rate increases
+- Credit-spread widening
+- Global equity drawdowns
 - AUD appreciation or depreciation
-- Credit spread widening
+- Australian property-price changes
+- Loss or reduction of employment income
+- Correlation convergence during market stress
 
-No single scenario is allowed to force liquidation of long-term assets.
-
-### Why
-
-- Ensures resilience rather than optimisation for one macro view.
-- Converts abstract diversification into practical drawdown control.
+Stress testing evaluates each capital function separately and then the combined balance sheet. Property Capital must not depend on equity-market recovery or favourable foreign-exchange movements.
 
 ---
 
-## 8. Review Triggers (Not Calendar Reviews)
+## 9. Review Triggers
 
-### Strategy
+The strategy is reviewed when:
 
-Portfolio structure is reviewed only if:
-
-- Income assumptions materially change
-- Inflation or rate regime shifts structurally
+- Secure income or core expenditure changes materially
+- Property timing, search activity, target location, or expected complete cost changes
+- The Property Capital glide path moves to a new stage
+- Inflation, interest rates, or credit conditions change the relative value of eligible low-risk instruments
 - Asset correlations converge unexpectedly
-- Capital role boundaries are breached
+- Capital assigned to one function is being relied upon for another
+- A rule breach persists beyond its permitted remediation period
 
-### Why
-
-- Avoids reactive tinkering.
-- Focuses attention on regime change, not noise.
+Absent a trigger, portfolio changes must be justified by maturity management, tax efficiency, cost reduction, improved risk-adjusted return, or restoration of a required capital function.

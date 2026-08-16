@@ -15,7 +15,7 @@ INSTITUTIONS = [
     ("N26", "bank", "EUR", None),
     ("Bondora", "fintech", "EUR", "Isepankur/Bondora P2P — below the line"),
     ("Physical Cash", "other", "AUD", "Notes and coins held"),
-    ("Eroza", "other", "AUD", "Receivable — treatment TBD (see open items)"),
+    ("Eroza", "other", "EUR", "Liability — loan repayment owed to Eroza"),
 ]
 
 # (institution_name, account_name, account_type, currency, notes)
@@ -28,6 +28,7 @@ ACCOUNTS = [
     ("ANZ", "Jacob ANZ Savings", "savings", "AUD", None),
     ("ANZ", "Jacob ANZ Credit Card", "credit", "AUD", "Liability — treatment TBD"),
     ("Wise", "Wise EUR", "other", "EUR", None),
+    ("Wise", "Wise AUD", "other", "AUD", None),
     ("Wise", "Wise USD", "other", "USD", "Below the line"),
     ("Wise", "Wise GBP", "other", "GBP", None),
     ("N26", "N26 Darlene", "everyday", "EUR", None),
@@ -35,25 +36,27 @@ ACCOUNTS = [
     ("Bondora", "Isepankur - Bondora", "other", "EUR", "Below the line"),
     ("Physical Cash", "Cash USD", "other", "USD", "Below the line"),
     ("Physical Cash", "Cash AUD", "other", "AUD", "Below the line"),
-    ("Eroza", "Eroza Owed", "other", "AUD", "Receivable $60,000 — treatment TBD"),
+    ("Eroza", "Eroza Owed", "liability", "EUR", "Liability — €150,000 owed to Eroza (loan repayment)"),
 ]
 
 # (account_name, currency, balance)
 # Trading accounts (IB, CommSec) hold securities — cash component unknown until holdings imported
 CASH_BALANCES = [
-    ("Jacob RACQ Bonus Saver", "AUD", 80_001.19),
-    ("Jacob RACQ Everyday", "AUD", 31_776.64),
+    ("Jacob RACQ Bonus Saver", "AUD", 87_130.00),
+    ("Jacob RACQ Everyday", "AUD", 62_781.00),
     ("Darlene RACQ Everyday", "AUD", 6_122.03),
-    ("Jacob ANZ Savings", "AUD", 3_032.39),
-    ("Jacob ANZ Credit Card", "AUD", -692.50),
-    ("Wise EUR", "EUR", 6_035.85),
-    ("Wise USD", "USD", 2_552.15),
-    ("N26 Darlene", "EUR", 3_108.00),
-    ("N26 Jacob", "EUR", 1_535.68),
+    ("Jacob ANZ Savings", "AUD", 600.00),
+    ("Jacob ANZ Credit Card", "AUD", 0.00),
+    ("Wise EUR", "EUR", 839_689.00),
+    ("Wise AUD", "AUD", 6_240.00),
+    ("Wise USD", "USD", 0.00),
+    ("Wise GBP", "GBP", 0.00),
+    ("N26 Darlene", "EUR", 0.00),
+    ("N26 Jacob", "EUR", 0.00),
     ("Isepankur - Bondora", "EUR", 2_041.00),
     ("Cash USD", "USD", 1_500.00),
     ("Cash AUD", "AUD", 200.00),
-    ("Eroza Owed", "AUD", 60_000.00),
+    ("Eroza Owed", "EUR", -150_000.00),
 ]
 
 PARAMETERS = [
