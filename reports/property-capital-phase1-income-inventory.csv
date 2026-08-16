@@ -1,15 +1,15 @@
 ticker,name,role,units,price_local,currency,market_value_aud,reliability,income_kind,franking_pct,forward_gross_aud,foreign_withholding_aud,forward_net_cash_aud,forward_taxable_aud,forward_franking_credit_aud,foreign_tax_credit_aud,foreign_tax_note
-SOL.AX,Washington H Soul Pattinson,Long-Term,6200,46.53,AUD,288486.0,high,au_div,100.0,6510.0,0,6510.0,9300.0,2790.0,0,franking % ASSUMED; confirm vs dividend statements/AMMA
-BHP.AX,BHP Group,Long-Term,3200,61.35,AUD,196320.0,cyclical,au_div,100.0,5120.0,0,5120.0,7314.29,2194.29,0,franking % ASSUMED; confirm vs dividend statements/AMMA
-VAS.AX,Vanguard Aust Shares ETF,Long-Term,1500,112.92,AUD,169380.0,high,au_div,80.0,4800.0,0,4800.0,6445.71,1645.71,0,franking % ASSUMED; confirm vs dividend statements/AMMA
+SOL.AX,Washington H Soul Pattinson,Long-Term,6200,46.53,AUD,288486.0,high,au_div,100.0,6510.0,0,6510.0,9300.0,2790.0,0,100% franking ASSUMED per user; confirm final split from dividend statement
+BHP.AX,BHP Group,Long-Term,3200,61.35,AUD,196320.0,cyclical,au_div,100.0,5120.0,0,5120.0,7314.29,2194.29,0,100% franking ASSUMED per user; confirm final split from dividend statements
+VAS.AX,Vanguard Aust Shares ETF,Long-Term,1500,112.92,AUD,169380.0,high,au_div,100.0,4800.0,0,4800.0,6857.14,2057.14,0,100% franking ASSUMED per user; confirm final split from VAS AMMA
 VGS.AX,Vanguard MSCI Intl Shares ETF,Long-Term,1100,164.45,AUD,180895.0,high,foreign_etf,0,3142.86,0,2200.0,3142.86,0,942.86,30pct foreign-tax gross-up is a PLACEHOLDER pending AMMA; not sourced
 VGE.AX,Vanguard Emerging Mkts ETF,Long-Term,1316,94.32,AUD,124125.12,moderate,foreign_etf,0,2820.0,0,1974.0,2820.0,0,846.0,30pct foreign-tax gross-up is a PLACEHOLDER pending AMMA; not sourced
-AGL.AX,AGL Energy,Long-Term,6550,8.82,AUD,57771.0,moderate,au_div,100.0,3144.0,0,3144.0,4491.43,1347.43,0,franking % ASSUMED; confirm vs dividend statements/AMMA
-ORG.AX,Origin Energy,Long-Term,1500,12.07,AUD,18105.0,moderate,au_div,50.0,825.0,0,825.0,1001.79,176.79,0,franking % ASSUMED; confirm vs dividend statements/AMMA
+AGL.AX,AGL Energy,Long-Term,6550,8.82,AUD,57771.0,moderate,au_div,100.0,3144.0,0,3144.0,4491.43,1347.43,0,100% franking ASSUMED per user; confirm final split from dividend statement
+ORG.AX,Origin Energy,Long-Term,1500,12.07,AUD,18105.0,moderate,au_div,100.0,825.0,0,825.0,1178.57,353.57,0,100% franking ASSUMED per user; confirm final split from dividend statement
 UKWl,Greencoat UK Wind,Long-Term,28464,1.11,GBP,60359.16,moderate,foreign_div_uk,0,5437.76,0,5437.76,5437.76,0,0,UK dividends: 0pct UK withholding to non-resident
 GHY.AX,Gold Hydrogen,Long-Term,20522,0.55,AUD,11287.1,none,pre_revenue_equity,0,0,0,0,0,0,0,
 CRED.AX,BetaShares AU IG Corp Bond ETF,Property Capital,4930,22.79,AUD,112354.7,high,interest,0.0,5916.0,0,5916.0,5916.0,0,0,franking % ASSUMED; confirm vs dividend statements/AMMA
-GSBG27.AX,Cth Bond Apr 2027 (coupon TBC),Property Capital,1742,101.72,AUD,177196.24,high_contractual,govt_coupon,0,7839.0,0,7839.0,7839.0,0,0,4.50pct coupon is a WORKING ASSUMPTION; confirm vs ASX eAGB/AOFM; YTM deferred to Phase 2
-GSBG33.AX,Cth Bond Jun 2033 (coupon TBC),Property Capital,349,100.15,AUD,34952.35,high_contractual,govt_coupon,0,1570.5,0,1570.5,1570.5,0,0,4.50pct coupon is a WORKING ASSUMPTION; confirm vs ASX eAGB/AOFM; YTM deferred to Phase 2
-FLBL,Franklin Senior Loan ETF,Transitional,2300,23.06,USD,74863.14,moderate_transition,us_interest,0,5518.97,827.84,4691.12,4691.12,0,827.84,15pct US WH assumed (W-8BEN); creditable as FITO; confirm vs IB statement
-JPST,JPMorgan Ultra-Short Income ETF,Transitional,1000,50.5,USD,71280.75,high_transition,us_interest,0,2964.15,444.62,2519.53,2519.53,0,444.62,15pct US WH assumed (W-8BEN); creditable as FITO; confirm vs IB statement
+GSBG27.AX,Cth Bond 4.75% Apr 2027,Property Capital,1742,101.72,AUD,177196.24,high_contractual,govt_coupon,0,8275.0,0,8275.0,8275.0,0,0,4.75pct coupon CONFIRMED from AOFM (ISIN AU3TB0000135); YTM 4.586pct from RBA F16 12-Aug-2026
+GSBG33.AX,Cth Bond 4.50% Apr 2033,Property Capital,349,100.15,AUD,34952.35,high_contractual,govt_coupon,0,1570.5,0,1570.5,1570.5,0,0,4.50pct coupon CONFIRMED from AOFM (ISIN AU000XCLWAG2); YTM 4.769pct from RBA F16 12-Aug-2026
+FLBL,Franklin Senior Loan ETF,Transitional,2300,23.06,USD,74863.14,moderate_transition,us_interest,0,5518.97,827.84,4691.12,5518.97,0,827.84,Taxable foreign income is gross distribution; net cash after 15pct US WH; FITO equals withholding subject to FITO rules; confirm via IB statement
+JPST,JPMorgan Ultra-Short Income ETF,Transitional,1000,50.5,USD,71280.75,high_transition,us_interest,0,2964.15,444.62,2519.53,2964.15,0,444.62,Taxable foreign income is gross distribution; net cash after 15pct US WH; FITO equals withholding subject to FITO rules; confirm via IB statement
