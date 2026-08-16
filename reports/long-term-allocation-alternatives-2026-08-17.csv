@@ -1,0 +1,54 @@
+alternative,sleeve,instrument_or_exposure,amount_aud,weight_pct,income_yield_low_pct,income_yield_high_pct,total_return_low_pct,total_return_high_pct,tax_character,implementation_note
+LT-A,Current-thesis,SOL.AX,220000,20,2.0,3.0,6.0,9.0,Australian franked dividend assumed,Retain as diversified LIC but cap single-security risk
+LT-A,Current-thesis,BHP.AX,165000,15,3.5,5.5,5.0,9.0,Australian franked dividend cyclical,Direct commodity and China exposure
+LT-A,Current-thesis,VAS.AX,110000,10,3.5,5.0,5.0,8.0,Australian ETF distributions/franking per AMMA,Retain but recognise overlap
+LT-A,Current-thesis,VGS.AX,165000,15,1.5,2.5,6.0,9.0,Foreign income/AMMA,Firm global diversifier
+LT-A,Current-thesis,VGE.AX,88000,8,2.0,3.5,6.0,10.0,Foreign income/AMMA,Intentional EM sleeve
+LT-A,Current-thesis,AGL.AX,55000,5,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Energy transition exposure
+LT-A,Current-thesis,ORG.AX,22000,2,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Small complementary energy position
+LT-A,Current-thesis,UKWl,55000,5,5.0,9.0,5.0,8.0,UK dividend/no franking assumed,Retain real-asset income and GBP exposure
+LT-A,Current-thesis,GHY.AX,11000,1,0.0,0.0,-100.0,50.0,Speculative capital gain/loss,Bound optionality
+LT-A,Current-thesis,CRED.AX,55000,5,4.5,6.0,4.0,6.0,Australian interest ordinary income,Limited credit only
+LT-A,Current-thesis,JPST,44000,4,3.5,5.0,3.5,5.0,US interest/withholding and FX,Transition/ballast not core growth
+LT-A,Current-thesis,Near-cash reserve,110000,10,2.5,4.0,2.5,4.0,Ordinary interest,Capacity for tax and implementation friction
+LT-B,Globally-diversified,VGS.AX,440000,40,1.5,2.5,6.0,9.0,Foreign income/AMMA,Core developed-market exposure
+LT-B,Globally-diversified,VAS.AX,110000,10,3.5,5.0,5.0,8.0,Australian ETF distributions/franking per AMMA,Controlled AUD home bias
+LT-B,Globally-diversified,VGE.AX,110000,10,2.0,3.5,6.0,10.0,Foreign income/AMMA,Separate EM risk budget
+LT-B,Globally-diversified,SOL.AX,88000,8,2.0,3.0,6.0,9.0,Australian franked dividend assumed,Reduced single-security concentration
+LT-B,Globally-diversified,BHP.AX,55000,5,3.5,5.5,5.0,9.0,Australian franked dividend cyclical,Retain but reduce commodity concentration
+LT-B,Globally-diversified,Global quality/value/small-cap,77000,7,1.5,3.0,6.0,10.0,Foreign ETF AMMA,Requires instrument selection and fee check
+LT-B,Globally-diversified,UKWl,55000,5,5.0,9.0,5.0,8.0,UK dividend/no franking assumed,Small real-asset sleeve
+LT-B,Globally-diversified,JPST or AUD short credit,55000,5,3.5,5.0,3.5,5.0,Interest income,Use AUD implementation if property funding requires it
+LT-B,Globally-diversified,CRED.AX,55000,5,4.5,6.0,4.0,6.0,Australian interest ordinary income,Keep credit bounded
+LT-B,Globally-diversified,Near-cash reserve,55000,5,2.5,4.0,2.5,4.0,Ordinary interest,Transition and tax buffer
+LT-C,Income-total-return,VGS.AX,275000,25,1.5,2.5,6.0,9.0,Foreign income/AMMA,Global growth base
+LT-C,Income-total-return,VAS.AX,165000,15,3.5,5.0,5.0,8.0,Australian ETF distributions/franking per AMMA,Franked income and AUD exposure
+LT-C,Income-total-return,SOL.AX,165000,15,2.0,3.0,6.0,9.0,Australian franked dividend assumed,Income-oriented diversified LIC
+LT-C,Income-total-return,BHP.AX,110000,10,3.5,5.5,5.0,9.0,Australian franked dividend cyclical,Accept cyclical income deliberately
+LT-C,Income-total-return,UKWl,110000,10,5.0,9.0,5.0,8.0,UK dividend/no franking assumed,Infrastructure income
+LT-C,Income-total-return,AGL.AX,55000,5,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Energy income with transition risk
+LT-C,Income-total-return,ORG.AX,55000,5,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Energy income; monitor duplication
+LT-C,Income-total-return,CRED.AX,55000,5,4.5,6.0,4.0,6.0,Australian interest ordinary income,Income sleeve not equity substitute
+LT-C,Income-total-return,VGE.AX,55000,5,2.0,3.5,6.0,10.0,Foreign income/AMMA,Small EM growth sleeve
+LT-C,Income-total-return,Near-cash reserve,55000,5,2.5,4.0,2.5,4.0,Ordinary interest,Distribution smoothing and tax buffer
+LT-D,Growth-maximising,VGS.AX,605000,55,1.5,2.5,6.0,9.0,Foreign income/AMMA,Primary diversified equity engine
+LT-D,Growth-maximising,VGE.AX,110000,10,2.0,3.5,6.0,10.0,Foreign income/AMMA,Higher-risk growth sleeve
+LT-D,Growth-maximising,Global quality/value/small-cap,110000,10,1.5,3.0,6.0,10.0,Foreign ETF AMMA,Factor diversification
+LT-D,Growth-maximising,VAS.AX,110000,10,3.5,5.0,5.0,8.0,Australian ETF distributions/franking per AMMA,Moderate home bias
+LT-D,Growth-maximising,SOL.AX,55000,5,2.0,3.0,6.0,9.0,Australian franked dividend assumed,Retain only as satellite
+LT-D,Growth-maximising,BHP.AX,33000,3,3.5,5.5,5.0,9.0,Australian franked dividend cyclical,Small commodity satellite
+LT-D,Growth-maximising,UKWl,22000,2,5.0,9.0,5.0,8.0,UK dividend/no franking assumed,Small real-asset satellite
+LT-D,Growth-maximising,Near-cash reserve,55000,5,2.5,4.0,2.5,4.0,Ordinary interest,Implementation buffer
+LT-E,Tax-minimal-transition,VGS.AX,275000,25,1.5,2.5,6.0,9.0,Foreign income/AMMA,Use new capital and low-gain lots first
+LT-E,Tax-minimal-transition,VAS.AX,165000,15,3.5,5.0,5.0,8.0,Australian ETF distributions/franking per AMMA,Retain existing position
+LT-E,Tax-minimal-transition,VGE.AX,110000,10,2.0,3.5,6.0,10.0,Foreign income/AMMA,Retain existing position
+LT-E,Tax-minimal-transition,SOL.AX,165000,15,2.0,3.0,6.0,9.0,Australian franked dividend assumed,Retain existing position; no forced sale
+LT-E,Tax-minimal-transition,BHP.AX,110000,10,3.5,5.5,5.0,9.0,Australian franked dividend cyclical,Retain existing position; assess lots
+LT-E,Tax-minimal-transition,AGL.AX,55000,5,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Retain unless thesis breaks
+LT-E,Tax-minimal-transition,ORG.AX,22000,2,3.0,5.0,4.0,8.0,Australian dividend/franking assumed,Retain small position
+LT-E,Tax-minimal-transition,UKWl,33000,3,5.0,9.0,5.0,8.0,UK dividend/no franking assumed,Do not sell solely for current loss
+LT-E,Tax-minimal-transition,CRED.AX,55000,5,4.5,6.0,4.0,6.0,Australian interest ordinary income,Only if retained in LT mandate after Phase 5
+LT-E,Tax-minimal-transition,FLBL,33000,3,5.0,8.0,3.0,6.0,US interest/withholding and FX,Transition only; replacement preferred
+LT-E,Tax-minimal-transition,JPST,44000,4,3.5,5.0,3.5,5.0,US interest/withholding and FX,Transition cash bucket
+LT-E,Tax-minimal-transition,GHY.AX,11000,1,0.0,0.0,-100.0,50.0,Speculative capital gain/loss,Keep bounded; no averaging up
+LT-E,Tax-minimal-transition,Near-cash reserve,22000,2,2.5,4.0,2.5,4.0,Ordinary interest,Tax and transaction buffer
