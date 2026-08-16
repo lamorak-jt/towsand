@@ -1,0 +1,51 @@
+sleeve,issuer_instrument,allocation_capacity_aud,maturity, gross_yield_pct,taxable_income_per_100k,duration_years,credit_stress_est_loss_pct,liquidity_days_to_cash,protection,fees_spread_bps,purchase_window_fit,source,date_captured
+Deposit,ING Savings Booster,500000,At-call,6.00,6000,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Rabobank HISA (<250k),250000,At-call,5.90,5900,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Ubank Save,999999,At-call,5.85,5850,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Bankwest Easy Saver,999999,At-call,5.75,5750,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank Personal Savings,250000,At-call,5.35,5350,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Teachers Mutual Bank Essential Saver,999999,At-call,5.00,5000,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Great Southern Bank Everyday Saver,999999,At-call,4.80,4800,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,BOQ Simple Saver,999999,At-call,4.80,4800,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Bank of Sydney BOS Saver,999999,At-call,4.75,4750,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,MoveBank Online Saver,999999,At-call,4.70,4700,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Heartland Bank MySavings,250000,At-call,4.55,4550,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Alex Bank Save,250000,At-call,4.50,4500,0.00,0.00,1,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,ING TD 3 months,5000000,3 months,5.05,5050,0.25,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,MoveBank TD 6 months,999999,6 months,5.35,5350,0.50,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,ING TD 9 months,5000000,9 months,5.05,5050,0.75,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank TD 11 months,1000000,11 months,5.25,5250,0.92,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,MoveBank TD 12 months,999999,12 months,5.40,5400,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank TD 12 months,1000000,12 months,5.35,5350,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,ING TD 12 months,5000000,12 months,5.30,5300,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Suncorp TD 12 months,999999,12 months,5.35,5350,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,ANZ Advance Notice TD 12 months,100000,12 months,5.30,5300,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,CBA TD Special 12 months,5000000,12 months,5.25,5250,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,NAB TD 12 months,1999999,12 months,5.25,5250,1.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Unity Bank TD 2 years,999999,24 months,5.55,5550,2.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank TD 3 years,1000000,36 months,5.40,5400,3.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank TD 4 years,1000000,48 months,5.50,5500,4.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Deposit,Judo Bank TD 5 years,1000000,60 months,5.50,5500,5.00,0.00,31,FCS up to 250k per ADI,0,2027-2030,InfoChoice,2026-08-16
+Commonwealth,Treasury Bond 4.75% Apr-2027 (GSBG27),999999,2027-04-21,4.586,4750,0.49,0.00,2,Commonwealth gov't,5-10,2027,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 2.75% Nov-2027,999999,2027-11-21,4.605,2750,1.45,0.00,2,Commonwealth gov't,5-10,2027-2028,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 2.25% May-2028,999999,2028-05-21,4.575,2250,1.92,0.00,2,Commonwealth gov't,5-10,2028,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 2.75% Nov-2028,999999,2028-11-21,4.559,2750,2.38,0.00,2,Commonwealth gov't,5-10,2028,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 3.25% Apr-2029,999999,2029-04-21,4.550,3250,2.37,0.00,2,Commonwealth gov't,5-10,2029,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 2.75% Nov-2029,999999,2029-11-21,4.549,2750,3.28,0.00,2,Commonwealth gov't,5-10,2029,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 2.50% May-2030,999999,2030-05-21,4.553,2500,3.74,0.00,2,Commonwealth gov't,5-10,2030,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 1.00% Dec-2030,999999,2030-12-21,4.581,1000,4.30,0.00,2,Commonwealth gov't,5-10,2030,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 1.50% Jun-2031,999999,2031-06-21,4.610,1500,4.71,0.00,2,Commonwealth gov't,5-10,2030-2031,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 1.00% Nov-2031,999999,2031-11-21,4.641,1000,5.23,0.00,2,Commonwealth gov't,5-10,2031,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 1.25% May-2032,999999,2032-05-21,4.689,1250,5.64,0.00,2,Commonwealth gov't,5-10,2031-2032,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 1.75% Nov-2032,999999,2032-11-21,4.742,1750,5.99,0.00,2,Commonwealth gov't,5-10,2032,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 4.50% Apr-2033 (GSBG33),999999,2033-04-21,4.769,4500,5.57,0.00,2,Commonwealth gov't,5-10,2033,RBA F16 + AOFM,2026-08-12
+Commonwealth,Treasury Bond 3.00% Nov-2033,999999,2033-11-21,4.823,3000,6.56,0.00,2,Commonwealth gov't,5-10,2033,RBA F16 + AOFM,2026-08-12
+Semi-Gov,NSWTC bonds (est. spread +10bps over Cth),999999,2027-2033,4.69,~4650,~0.5-6.5,0.10,5,State gov't AAA/AA+,10-20,2027-2033,Estimate (RBA F16.1 unavailable),2026-08-16
+Semi-Gov,VICTC bonds (est. spread +12bps over Cth),999999,2027-2033,4.71,~4650,~0.5-6.5,0.10,5,State gov't AAA/AA+,10-20,2027-2033,Estimate (RBA F16.1 unavailable),2026-08-16
+Semi-Gov,QTC bonds (est. spread +15bps over Cth),999999,2027-2033,4.74,~4650,~0.5-6.5,0.10,7,State gov't AAA/AA+,10-20,2027-2033,Estimate (RBA F16.1 unavailable),2026-08-16
+Credit,CRED.AX (BetaShares IG Corporate Bond ETF),330000,Portfolio,5.23,5230,~4.0,1.50,3,Diversified IG,19,2027-2030,yfinance + Betashares,2026-08-16
+Credit,IAF.AX (iShares Core Composite Bond ETF),999999,Portfolio,3.15,3150,~5.0,0.50,3,Diversified govt+IG,10,2027-2030,yfinance + iShares,2026-08-16
+Indexed,Treasury Indexed Bond 0.75% Nov-2027,999999,2027-11-21,2.624,750,1.45,0.00,2,Commonwealth gov't,5-10,2027,RBA F16 + AOFM,2026-08-12
+Indexed,Treasury Indexed Bond 2.50% Sep-2030,999999,2030-09-20,2.662,2500,4.10,0.00,2,Commonwealth gov't,5-10,2030,RBA F16 + AOFM,2026-08-12
+Indexed,Treasury Indexed Bond 0.25% Nov-2032,999999,2032-11-21,2.709,250,5.99,0.00,2,Commonwealth gov't,5-10,2032,RBA F16 + AOFM,2026-08-12
+Indexed,Treasury Indexed Bond 2.00% Aug-2035,999999,2035-08-21,2.766,2000,9.02,0.00,2,Commonwealth gov't,5-10,2030-2035,RBA F16 + AOFM,2026-08-12

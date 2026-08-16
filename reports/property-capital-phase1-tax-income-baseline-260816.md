@@ -1,0 +1,294 @@
+# Property Capital — Phase 1: Tax & Income Baseline
+
+**Date:** 2026-08-16
+**Plan ref:** `project/260816-plan.md`, Phase 1
+**Author:** Towsand research (agent)
+**Status:** Phase 1 deliverable (revised). Establishes the tax and income baseline against which Phase 2–7 are evaluated.
+**Revision note:** This version corrects the financial-year tax rates (FY2026–27), reframes franking and foreign-tax inputs as **blocking** (not merely flagged), adds a spouse-inclusive Medicare Levy Surcharge test, and fixes several wording/conceptual errors flagged in review. The headline conclusion is unchanged but the precise breakeven is now presented as a **range pending authoritative inputs**, not a single decision-grade figure.
+
+> **Bottom line up front.** Under the plan's confirmed assumptions — Property Capital owned by you individually; Australian tax resident; **you have no employment income**; your spouse receives the secure AUD 5,500/month net income (which reduces the household deficit but is **not** part of your taxable income); ~AUD 50k carried-forward capital losses — the AUD 70,596 household deficit is coverable at a blended Property Capital gross yield that is **well below the tested 3.5–5.5% range in every sensitivity**.
+>
+> | Sensitivity (FY2026–27) | Breakeven gross yield |
+> |---|---:|
+> | Core (assumed franking + PHI) | **2.27%** |
+> | Core, **no franking** (conservative bound) | 2.64% |
+> | Core, **no private health cover** (MLS) | 2.36% |
+> | Core, no franking **and** no PHI | 2.73% |
+> | Defensive (assumed franking + PHI) | **3.06%** |
+> | Defensive, no franking + no PHI | 3.39% |
+>
+> Two effects drive the low hurdle: (1) with no employment income in your name, the AUD 18,200 tax-free threshold is fully available to portfolio income; (2) franking credits on the Long-Term equity portfolio produce a **net tax refund** at these income levels. Even with franking removed entirely, the core breakeven rises only ~0.37pp (to 2.64%) — confirming the user-review estimate.
+>
+> **The precise breakeven is not yet decision-grade.** It depends on inputs only you can supply: actual franking percentages (dividend statements / AMMA), the VGS/VGE AMMA foreign-income/foreign-tax split, your bond coupons (ASX eAGB / AOFM), and private-health-cover + spouse gross taxable income for MLS. Until those are in hand, treat the figures above as a **range** (core ≈ 2.3–2.7%, defensive ≈ 3.1–3.4%), all comfortably below the 3.5% floor. The strategic implication is robust regardless: **optimize Property Capital for capital preservation, AUD matching, and liquidity first; yield second.**
+
+---
+
+## 1. Inputs and data sources
+
+| Input | Value | Source / status |
+|---|---|---|
+| Holdings, units, cost bases | DB `holdings` | `data/towsand.db` (IB Flex + CommSec), 2026-08-14/16 |
+| Market prices (AUD items) | 2026-08-14 close | DB `prices` (`ib_flex`) |
+| Bond prices (GSBG27/33) | 2026-08-16 close | DB `prices` (`yfinance`) |
+| FX: USD/AUD 1.4115, GBP/AUD 1.9104, EUR/AUD 1.6332 | 2026-08-14 | DB `fx_rates` (`ib_flex`) |
+| Trailing-12m cash distributions per unit | yfinance dividend history | actual ex-date payments; **cash timing only — not tax character** |
+| Forward distribution estimates | Conservative, analyst-set | see §1.1; BHP haircut for cyclicality |
+| **Franking percentages** | ASSUMED (SOL/BHP/AGL 100%, ORG 50%, VAS 80%) | **BLOCKING — source from dividend statements / AMMA** |
+| **VGS/VGE foreign income & foreign tax** | 30% placeholder | **BLOCKING — source from AMMA; placeholder not actual** |
+| **Bond coupons** | 4.50% working assumption | **Confirm vs ASX eAGB / AOFM; YTM is a Phase 2 calc** |
+| **MLS inputs** | spouse gross est. AUD 83k; PHI unknown | **BLOCKING — confirm PHI + spouse taxable + dependants** |
+| Household deficit | AUD 70,596/yr | `strategy-assumptions.md` §3 (net of spouse's secure income) |
+| Property Capital target | AUD 2,200,000 | `strategy-assumptions.md` §2 |
+| Carried-forward capital losses | ~AUD 50,000 | plan (Given) |
+
+**Holdings snapshot (market value, AUD):**
+
+| Ticker | Units | Role | Market value (AUD) |
+|---|---:|---|---:|
+| SOL.AX | 6,200 | Long-Term | 288,486 |
+| BHP.AX | 3,200 | Long-Term | 196,320 |
+| VAS.AX | 1,500 | Long-Term | 169,380 |
+| VGS.AX | 1,100 | Long-Term | 180,895 |
+| VGE.AX | 1,316 | Long-Term | 124,125 |
+| AGL.AX | 6,550 | Long-Term | 57,771 |
+| ORG.AX | 1,500 | Long-Term | 18,105 |
+| UKWl | 28,464 | Long-Term | 60,359 |
+| GHY.AX | 20,522 | Long-Term (optionality) | 11,287 |
+| **Long-Term subtotal** | | | **1,106,728** |
+| GSBG27.AX | 1,742 | Property Capital | 177,196 |
+| GSBG33.AX | 349 | Property Capital | 34,952 |
+| CRED.AX | 4,930 | Property Capital | 112,355 |
+| **Existing PC subtotal** | | | **324,503** (14.8% of 2.2m target) |
+| FLBL | 2,300 | Transitional (USD) | 74,863 |
+| JPST | 1,000 | Transitional (USD) | 71,281 |
+
+Roles follow `recommendations.md` and the plan's Phase 3 treatment.
+
+---
+
+## 2. Section 1.1 — Expected portfolio income inventory
+
+Per-unit trailing-12m (TTM) figures are **actual cash distributions** from yfinance. **Important limitation:** yfinance establishes only cash amount and timing — it does **not** establish Australian tax components (franked/unfranked split, franking credits), foreign income tax offsets, or capital-gains components. Those require the funds' annual AMMA statements and the companies' dividend statements. Where tax components are shown below they are **assumed and clearly marked**, pending those statements.
+
+| Ticker | TTM cash (AUD) | Fwd net cash (AUD) | Income kind | Frank % (assumed) | Fwd gross (AUD) | Fwd WH (AUD) | Fwd taxable (AUD) | Fwd franking credit (AUD) | Foreign tax credit (AUD) | Reliability |
+|---|---:|---:|---|---:|---:|---:|---:|---:|---:|---|
+| SOL.AX | 6,634 | 6,510 | AU franked dividend | 100%⚠ | 6,510 | 0 | 9,300 | 2,790 | 0 | High |
+| BHP.AX | 6,265 | 5,120 | AU franked dividend | 100%⚠ | 5,120 | 0 | 7,314 | 2,194 | 0 | Cyclical |
+| VAS.AX | 4,879 | 4,800 | AU franked+unfranked | 80%⚠ | 4,800 | 0 | 6,446 | 1,646 | 0 | High |
+| VGS.AX | 2,241 | 2,200 | Foreign ETF (AU-domiciled) | 0% | 3,143⚠ | 0 | 3,143 | 0 | 943⚠ | High |
+| VGE.AX | 2,143 | 1,974 | Foreign ETF (AU-domiciled) | 0% | 2,820⚠ | 0 | 2,820 | 0 | 846⚠ | Moderate (lumpy) |
+| AGL.AX | 3,210 | 3,144 | AU franked dividend | 100%⚠ | 3,144 | 0 | 4,491 | 1,347 | 0 | Moderate |
+| ORG.AX | 900 | 825 | AU franked+unfranked | 50%⚠ | 825 | 0 | 1,002 | 177 | 0 | Moderate |
+| UKWl | 5,731 | 5,438 | Foreign dividend (UK) | 0% | 5,438 | 0 | 5,438 | 0 | 0 | Moderate |
+| GHY.AX | 0 | 0 | pre-revenue equity | — | 0 | 0 | 0 | 0 | 0 | None |
+| CRED.AX | 5,974 | 5,916 | Interest (AUD IG credit) | 0% | 5,916 | 0 | 5,916 | 0 | 0 | High |
+| GSBG27.AX | 8,275 | 8,275 | Govt coupon (4.75%✅) | 0% | 8,275 | 0 | 8,275 | 0 | 0 | High (contractual) |
+| GSBG33.AX | 1,571 | 1,571 | Govt coupon (4.50%✅) | 0% | 1,571 | 0 | 1,571 | 0 | 0 | High (contractual) |
+| FLBL | 5,594 | 4,691 | US senior-loan interest | 0% | 5,519 | 828⚠ | 4,691 | 0 | 828⚠ | Moderate (transition) |
+| JPST | 2,987 | 2,520 | US ultra-short interest | 0% | 2,964 | 445⚠ | 2,520 | 0 | 445⚠ | High (transition) |
+
+⚠ = **assumed / placeholder, not sourced.** See §7 blocking inputs.
+
+**Notes on the plan's "pay particular attention" list:**
+
+- **SOL** — TTM 107¢/share, 100% franked (assumed). Forward 105¢ (conservative, ~flat). Anchor equity income.
+- **BHP** — TTM 195.77¢/share AUD. **Not annualized:** latest single dividend (103.85¢) × 2 would overstate. Forward **160¢/share** (~18% below TTM) reflects cyclicality and the plan's caution. Franked ~100% assumed (confirm). Largest distribution-reliability risk.
+- **VAS / VGS / VGE** — quarterly. VAS ~80% franked (assumed). VGS/VGE unfranked foreign income; the foreign-income and foreign-tax figures here are a **30% placeholder pending AMMA** — the AMMA must be used to separate foreign income, foreign income tax offsets, discounted capital gains, and other components. yfinance is used only for cash timing.
+- **CRED** — monthly interest (~10¢/unit), ~5.3% cash distribution yield. Property Capital interest (unfranked).
+- **FLBL / JPST** — USD ETFs; included for inventory completeness but **excluded from the steady-state model** (Phase 3 flags both for sale/replacement; unhedged USD fails the AUD requirement). Their capital migrates into Property Capital and is captured via the blended Property yield. Withholding: 15% US WH assumed (W-8BEN filed — confirm); the WH is creditable as a foreign income tax offset. The IB transaction statement (which records actual withholding entries) is a better source than yfinance for these — use it when available.
+- **UKWl** — Long-Term only (per plan §3.2); UK dividends bear **0% UK withholding** to a non-resident, so no foreign tax credit and no franking. Do not sell solely for the tax loss.
+- **Government-bond coupons** — **CONFIRMED from AOFM (14 Aug 2026):** GSBG27 (Treasury Bond 4.75% 21 April 2027, ISIN AU3TB0000135) has a coupon of **4.75%**, not 4.50% as previously assumed. GSBG33 (Treasury Bond 4.50% 21 April 2033, ISIN AU000XCLWAG2) has a coupon of **4.50%**, confirmed as previously assumed. The corrected GSBG27 cash income is AUD 8,275 (1,742 units × AUD 100 face × 4.75%), an increase of AUD 436 from the 4.50% assumption. The combined existing PC cash income increases from AUD 15,326 to approximately AUD 15,762. **Yield to maturity** is now confirmed from RBA F16 (12 Aug 2026): GSBG27 YTM = 4.586%, GSBG33 YTM = 4.769%. See Phase 2 market scan for full details.
+
+**Return-of-capital / AMMA components:** not separately modelled. ETF distributions can include discounted-capital-gain and return-of-capital components that alter taxable income; confirm against annual AMMA statements.
+
+---
+
+## 3. Section 1.2 — Personal tax model
+
+**Financial year:** the modeled income is prospective from August 2026, so the base year is **FY2026–27** (1 Jul 2026 – 30 Jun 2027). The Stage-3 rate reduction taking effect from 1 July 2026 lowers the AUD 18,201–45,000 band from 16% to **15%**. Using the prior 16% rate overstated tax by a maximum of ~AUD 268/yr; the corrected rates lower the breakevens slightly.
+
+**FY2026–27 resident tax brackets (as applied):**
+
+| Band (AUD) | Rate |
+|---|---:|
+| 0 – 18,200 | 0% |
+| 18,201 – 45,000 | **15%** |
+| 45,001 – 135,000 | 30% |
+| 135,001 – 190,000 | 37% |
+| 190,001 + | 45% |
+
+> ⚠ **Confirm the full FY2026–27 schedule against the ATO's published 2026–27 tax tables**, including any CPI indexation of the AUD 18,200 / 45,000 thresholds and the position of the 37% / 45% thresholds. This report applies the 15% rate to the AUD 18,200–45,000 band (per the legislated Stage-3 reduction) and retains the Stage-3 thresholds for the higher bands; if thresholds were also indexed/shifted, the figures move by small amounts.
+
+Plus Medicare levy 2%. The Low Income Tax Offset (max AUD 700) is fully phased out well below the modeled taxable incomes (all > AUD 99,000), so it has **no effect** on any scenario. Franking credits are **refundable**; the foreign income tax offset is **non-refundable** (reduces tax to zero, cannot create a refund).
+
+**Taxable income composition (steady-state forward year):**
+
+1. **Australian interest** — Property Capital interest (deposits, term deposits, bond coupons, credit distributions) + CRED. All ordinary income, unfranked.
+2. **Australian unfranked distributions** — unfranked portion of VAS, ORG.
+3. **Franked dividends + grossed-up franking credits** — SOL, BHP, AGL, franked portion of VAS, ORG (gross-up 30%; credit = franked cash × 3/7). **Franking percentages are assumed — confirm.**
+4. **Foreign dividends and interest** — VGS, VGE (grossed up for foreign tax per AMMA), UKWl (no foreign tax). FLBL/JPST excluded from steady state (sold in transition).
+5. **Foreign tax offsets** — VGS/VGE foreign tax (placeholder 30% of gross, pending AMMA), claimed as non-refundable FITO. FLBL/JPST US WH (15%, creditable) — relevant to transition year only.
+6. **Realized capital gains** — **AUD 0** in the steady-state year (no planned disposals).
+7. **Carried-forward capital losses** — see (6): **zero current-year impact**. Capital losses cannot offset interest, dividends, or ordinary income. (See the corrected wording in §6.5 / Appendix B: the transition disposals of FLBL/UKWl at current values would *add* to losses, not consume the carried balance.)
+8. **CGT discounts** — relevant only to transition disposals (Phase 3).
+9. **Medicare levy (2%) and Medicare Levy Surcharge** — 2% levy applies (income well above threshold). **MLS**: excluded from the base case (assumes suitable private patient hospital cover, or family MLS income below threshold); modeled as a separate no-PHI sensitivity (§5). MLS family testing includes **both spouses'** taxable income — see §7 item 4.
+
+**Endogenous effective rate.** With no employment income, portfolio income is taxed from AUD 0; the first AUD 18,200 is tax-free and the next AUD 26,800 is only 15%. As Property yield rises, taxable income is pushed through the 30% band and into the 37% band (above AUD 135,000). The effective total rate therefore rises from ~15.4% at 3.5% yield to ~21.1% at 5.5% yield (core) — the progressive-band effect the plan requires.
+
+---
+
+## 4. Section 1.3 — True fixed-income income requirement
+
+**Starting deficit:** AUD 70,596/yr. This already nets out your spouse's AUD 5,500/month secure net income, so the portfolio's job is to cover the residual AUD 70,596. Your spouse's income is **not** in your taxable income (you own the portfolio individually and have no employment income) — this attribution is **confirmed** (see §7 item 1, now resolved).
+
+**Long-Term (equity) portfolio income, forward:**
+
+| Case | Cash distributions (AUD) | Taxable (AUD, grossed-up) | Franking credits (AUD) | Foreign tax (AUD) |
+|---|---:|---:|---:|---:|
+| Core | 30,011 | 39,954 | 8,154 | 1,789 |
+| Defensive | 17,039 | 22,608 | 4,580 | 989 |
+
+> **Conceptual note (important):** Australian tax is progressive, so there is **no unique standalone "after-tax equity income"** once Property Capital income is added — the tax attributable to the equity slice depends on the marginal band it falls in after Property income is stacked. The table below is therefore **descriptive only**: it shows the tax result *if the equity income were your only taxable income*. It must **not** be treated as an independently additive after-tax amount. The actual breakeven is solved from the integrated model in §5.
+
+| Case | Equity cash (AUD) | Equity taxable (AUD) | Income tax (AUD) | Medicare (AUD) | − Franking (AUD) | − FITO (AUD) | **Net tax** (AUD) | **"After-tax" if equity-only** (AUD) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Core | 30,011 | 39,954 | 3,275 | 799 | 8,154 | 1,789 | −5,868 (refund) | 35,879 |
+| Defensive | 17,039 | 22,608 | 661 | 452 | 4,580 | 989 | −5,435 (refund) | 22,474 |
+
+In both cases the equity portfolio, assessed on its own, generates a **net tax refund** because franking credits exceed the tax + Medicare due. *(Figures differ slightly from v1 because of the 15% band; the "after-tax if equity-only" is a descriptive bound, not the number used for the breakeven.)*
+
+**Defensive case definition:** equity distributions cut materially — BHP −60%, SOL −30%, VAS/VGS −30%, VGE −50%, AGL/ORG −50%, UKWl −40%. GHY nil throughout.
+
+**Existing Property Capital cash distribution.** The three existing PC-eligible holdings (GSBG27, GSBG33, CRED; AUD 324,503, 14.8% of target) generate **AUD 15,326/yr of cash distributions** — a **cash distribution yield of ~4.7%**, not a yield-to-maturity or expected total return. For the bonds trading above par, part of the coupon income is economically offset at redemption (the bond redeems at face, below its current price), so cash income exceeds economic return. **Do not treat 4.7% as a return anchor** — Phase 2 computes YTM. This cash is *inside* the AUD 2.2m blended-yield model below (not added on top).
+
+**Breakeven blended Property Capital gross yield (surplus = 0 vs AUD 70,596), FY2026–27:**
+
+| Sensitivity | Breakeven gross yield | Implied gross PC income (AUD) |
+|---|---:|---:|
+| **Core (assumed franking + PHI)** | **2.27%** | 49,923 |
+| Core, no franking | 2.64% | 58,077 |
+| Core, no PHI (MLS) | 2.36% | 51,950 |
+| Core, no franking + no PHI | 2.73% | 60,104 |
+| **Defensive (assumed franking + PHI)** | **3.06%** | 67,268 |
+| Defensive, no franking | 3.27% | 71,849 |
+| Defensive, no PHI (MLS) | 3.15% | 69,296 |
+| Defensive, no franking + no PHI | 3.39% | 74,635 |
+
+All breakevens sit **below** the 3.5% floor of the plan's test range. Operating Capital (AUD 105,894) is not drawn in any tested scenario.
+
+---
+
+## 5. Deliverable — Tax & income table
+
+Gross Property yield is applied to the full AUD 2.2m Property Capital target as a **blended** portfolio yield (deposits + Commonwealth + semis + credit), all ordinary/interest income. "Other portfolio income" = Long-Term equity cash distributions (net of foreign withholding). "Tax" = net tax after franking credits and FITO, including Medicare 2% (negative = net refund). "Net household income" = Property cash + Other cash − net tax. "Deficit/surplus" = Net household income − AUD 70,596. **FY2026–27 rates.**
+
+### Core case (assumed franking, PHI in place)
+
+| Gross Property yield | Property income (AUD) | Other portfolio income (AUD) | Taxable income (AUD) | Tax (AUD) | Net household income (AUD) | Deficit / surplus (AUD) | Effective tax rate |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3.5% | 77,000 | 30,011 | 116,954 | 18,002 | 89,009 | +18,413 | 15.4% |
+| 4.0% | 88,000 | 30,011 | 127,954 | 21,522 | 96,489 | +25,893 | 16.8% |
+| 4.5% | 99,000 | 30,011 | 138,954 | 25,319 | 103,692 | +33,096 | 18.2% |
+| 5.0% | 110,000 | 30,011 | 149,954 | 29,609 | 110,402 | +39,806 | 19.7% |
+| 5.5% | 121,000 | 30,011 | 160,954 | 33,899 | 117,112 | +46,516 | 21.1% |
+
+### Defensive case (assumed franking, PHI in place)
+
+| Gross Property yield | Property income (AUD) | Other portfolio income (AUD) | Taxable income (AUD) | Tax (AUD) | Net household income (AUD) | Deficit / surplus (AUD) | Effective tax rate |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3.5% | 77,000 | 17,039 | 99,608 | 16,826 | 77,214 | +6,618 | 16.9% |
+| 4.0% | 88,000 | 17,039 | 110,608 | 20,346 | 84,694 | +14,098 | 18.4% |
+| 4.5% | 99,000 | 17,039 | 121,608 | 23,866 | 92,174 | +21,578 | 19.6% |
+| 5.0% | 110,000 | 17,039 | 132,608 | 27,386 | 99,654 | +29,058 | 20.7% |
+| 5.5% | 121,000 | 17,039 | 143,608 | 31,508 | 106,531 | +35,935 | 21.9% |
+
+### Sensitivity — Core, no franking (conservative bound; franked dividends treated as unfranked ordinary income, no credits, no gross-up)
+
+| Gross Property yield | Property income (AUD) | Other portfolio income (AUD) | Taxable income (AUD) | Tax (AUD) | Net household income (AUD) | Deficit / surplus (AUD) | Effective tax rate |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3.5% | 77,000 | 30,011 | 108,800 | 23,547 | 83,464 | +12,868 | 21.6% |
+| 4.0% | 88,000 | 30,011 | 119,800 | 27,067 | 90,944 | +20,348 | 22.6% |
+| 4.5% | 99,000 | 30,011 | 130,800 | 30,587 | 98,424 | +27,828 | 23.4% |
+| 5.0% | 110,000 | 30,011 | 141,800 | 34,583 | 105,428 | +34,832 | 24.4% |
+| 5.5% | 121,000 | 30,011 | 152,800 | 38,873 | 112,138 | +41,542 | 25.4% |
+
+Removing all franking raises the core breakeven by **+0.37pp** (2.27% → 2.64%) — matching the review estimate of ~0.3–0.4pp — and lifts the effective rate by ~6pp, but the deficit is still covered at every tested yield.
+
+### Sensitivity — Core, no private patient hospital cover (MLS 1.5% of owner taxable, top tier)
+
+| Gross Property yield | Property income (AUD) | Other portfolio income (AUD) | Taxable income (AUD) | Tax incl. MLS (AUD) | MLS (AUD) | Net household income (AUD) | Deficit / surplus (AUD) |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3.5% | 77,000 | 30,011 | 116,954 | 19,756 | 1,754 | 87,254 | +16,658 |
+| 4.0% | 88,000 | 30,011 | 127,954 | 23,441 | 1,919 | 94,569 | +23,973 |
+| 4.5% | 99,000 | 30,011 | 138,954 | 27,403 | 2,084 | 101,608 | +31,012 |
+| 5.0% | 110,000 | 30,011 | 149,954 | 31,858 | 2,249 | 108,153 | +37,557 |
+| 5.5% | 121,000 | 30,011 | 160,954 | 36,313 | 2,414 | 114,698 | +44,102 |
+
+If no suitable PHI, MLS (at the 1.5% top tier — family MLS income is ~AUD 200–244k across these yields, above the top-tier threshold) raises the core breakeven by only **+0.09pp** (2.27% → 2.36%). MLS is therefore a minor effect *on the owner's portfolio analysis*, but note: (a) the spouse would also owe MLS on her income (a separate household effect not captured in the AUD 5,500/mo "net" figure), and (b) the deciding factor is simply whether suitable hospital cover is held — if it is, MLS = 0 and the base case stands.
+
+Supporting CSV artifacts: `reports/property-capital-phase1-income-inventory.csv` (14 rows, with gross/withholding/net/foreign-tax-credit columns and a `foreign_tax_note` flagging every assumed/placeholder component), `reports/property-capital-phase1-tax-income-table.csv` (25 rows: core, defensive, and the three core sensitivities).
+
+---
+
+## 6. Findings and implications for later phases
+
+1. **The income hurdle is lower than the strategy document's 4.0–4.8%, robustly.** Across every sensitivity (core 2.27–2.73%, defensive 3.06–3.39%), the breakeven is below the 3.5% floor. Phase 2–7 should **optimize for capital preservation, AUD matching, and liquidity first, yield second** — there is no need to chase 5%+ at the cost of credit or duration risk.
+2. **Franking is the single largest model assumption.** It drives the net refund. Removing all franking moves the core hurdle +0.37pp and the effective rate +6pp — material to the *precise* number but not to the *direction*. **Confirm franking %s from statements before treating 2.27% as decision-grade.**
+3. **BHP is the dominant income-reliability risk** (~21% of TTM equity cash, cyclical). Defensive already cuts it 60%; Phase 6 combined stress should test a deeper cut.
+4. **Capital losses are correctly inert here**, with corrected wording: the AUD 50k carried loss is reserved for Phase 3; transition disposals of FLBL/UKWl (currently at unrealized losses) would *add* to available losses, not consume the carried balance. Losses offset only capital gains from other strategically justified disposals — they do not justify an otherwise-bad sale.
+5. **Existing Property Capital** (AUD 324.5k) is a solid cash-income anchor (~4.7% **cash distribution yield**) but is only 14.8% of target; the bulk must be built from the residual EUR conversion (Phase 3.1) and AUD cash deployment. Do not anchor Phase 2 expectations to the 4.7% cash figure — use Phase 2 YTM.
+
+---
+
+## 7. Blocking inputs and flags
+
+**Blocking inputs (required before the precise breakeven is decision-grade):**
+
+1. **Income attribution — RESOLVED/CONFIRMED.** You own the portfolio individually; you have no employment income; your spouse receives the AUD 5,500/month net income, which reduces the household deficit but is **not** in your taxable income. No remaining conflict. *(Suggestion: `strategy-assumptions.md` could say "secure net income of the non-owner spouse" for clarity.)* The stale `seed.py` parameters (`income_amount=11000`, `monthly_expenses=9000`) should be updated to match the strategy docs.
+2. **Franking percentages.** Provide SOL, BHP, AGL, Origin dividend statements and the VAS AMMA. Confirm holding-period rules where relevant. Until supplied, the model uses SOL/BHP/AGL 100%, ORG 50%, VAS 80%.
+3. **VGS/VGE AMMA annual tax statements.** Separate foreign income, foreign income tax offsets, discounted capital gains, and other components. The 30% foreign-tax figure is a **placeholder, not sourced**. Use yfinance only for cash-flow timing.
+4. **MLS — private health cover + spouse gross taxable income + dependants.** MLS family testing includes both spouses. Your spouse's AUD 5,500/mo **net** implies a materially higher **gross** taxable income (~AUD 83k estimated here). Required: (a) whether suitable private patient hospital cover is held — if yes, MLS = 0 and the base case stands; (b) spouse's expected **taxable** (gross) income; (c) number of dependent children; (d) applicable FY2026–27 family threshold. If no PHI, MLS should be modeled explicitly (the no-PHI sensitivity here is indicative).
+5. **Bond coupons — RESOLVED.** Confirmed from AOFM (14 Aug 2026): GSBG27 = 4.75% (ISIN AU3TB0000135), GSBG33 = 4.50% (ISIN AU000XCLWAG2). YTM confirmed from RBA F16 (12 Aug 2026): GSBG27 = 4.586%, GSBG33 = 4.769%. See Phase 2 market scan for full AGS yield curve.
+
+**Other flags (lower priority):**
+
+6. **ETF AMMA components** (capital-gain / return-of-capital split) — confirm at tax time; not separately modelled.
+7. **FY2026–27 full bracket schedule** — confirm against ATO published 2026–27 tables (threshold indexation, 37%/45% positions). The 15% band is applied per the legislated Stage-3 reduction.
+8. **US withholding (W-8BEN)** — FLBL/JPST assumed 15%; confirm via IB statement (which also records the actual withholding entries — preferred source over yfinance). Transition-year effect only.
+9. **DB parameters stale** — `seed.py` `monthly_expenses`/`income_amount` contradict the strategy docs (see item 1).
+
+---
+
+## Appendix A — Methodology and worked example (core, 4.5% yield, FY2026–27)
+
+- Property income = 2,200,000 × 4.5% = AUD 99,000 (all ordinary/interest).
+- Other (equity) cash = 30,011; grossed-up taxable = 39,954 (franking credits 8,154 + foreign gross-up 1,789).
+- Total taxable = 138,954.
+- Income tax by band:
+  - 15% × (45,000 − 18,200) = 4,020
+  - 30% × (135,000 − 45,000) = 27,000
+  - 37% × (138,954 − 135,000) = 1,463
+  - Total income tax = 32,483
+- Medicare = 2% × 138,954 = 2,779. Gross tax + Medicare = 35,262.
+- FITO = min(1,789, 35,262) = 1,789 → tax after FITO = 33,473.
+- Franking credits = 8,154 → net tax = 33,473 − 8,154 = **25,319**.
+- Net household income = (99,000 + 30,011) − 25,319 = 103,692.
+- Surplus = 103,692 − 70,596 = +33,096.
+
+Note the taxable income (138,954) crosses into the 37% band (above 135,000); the marginal Property-Capital dollar at 4.5% yield is taxed at 37%, which is why the effective rate accelerates toward the top of the tested range. (In the prior 16%-band version this same case gave net tax 25,587; the ~AUD 268 reduction is exactly the 15%-vs-16% band difference: 1% × AUD 26,800 = AUD 268.)
+
+## Appendix B — Capital-loss wording (corrected)
+
+At current values, **JPST is around break-even, while FLBL and UKWl carry unrealized capital losses** (FLBL: cost USD 24.27/share vs price USD 23.06; UKWl: cost GBP 1.345/share vs price GBP 1.11 — AUD figures depend on the acquisition-date FX). Selling FLBL/UKWl therefore **adds** to the available capital-loss pool; it does **not** consume the carried-forward AUD 50k. Correct statement:
+
+> The existing ~AUD 50k carried-forward capital loss, plus any new realized losses from transition disposals (FLBL, UKWl, and any FX-driven loss on JPST), will be available to offset capital gains from other strategically justified disposals. They do not offset interest, dividends, or ordinary distributions, and they remain inert in the steady-state income model.
+
+The breakeven is unaffected (losses are inert in the steady state); this correction is to the descriptive wording only.
+
+## Appendix C — What is *not* in this baseline
+
+- No Phase 2 market data (deposit/bond/credit/semis/indexed yields) — captured on a single date in Phase 2.
+- No transition-year tax (JPST/FLBL/UKWl disposals, EUR conversion, capital-loss application) — Phase 3.
+- No portfolio construction, normalization, stress testing, or final instrument selection — Phases 4–7.
+- No drawdown of Operating Capital modelled (not needed: surplus in all tested scenarios).
+- No spouse tax return modeling (her income is excluded from your taxable income; only the MLS family test references it, as a sensitivity).
